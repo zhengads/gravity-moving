@@ -299,6 +299,20 @@ h1{font-family:MovingDisplay,NotoSC,sans-serif;color:#fff4e2;font-weight:400;fon
 @media(max-width:700px){.control-panel{margin-top:14px}.turn-button{height:51px}.footer{margin-top:12px}.settings-trigger{width:38px;height:38px}}
 @media(max-width:390px){.turn-controls{gap:6px}.turn-button{font-size:10px}.gravity-indicator{width:72px}.indicator-caption,.indicator-value{font-size:9px}}
 
+/* The top actions share one visual center; sound state remains legible on phones. */
+.top-actions{gap:8px}
+.top-actions .icon-button{height:42px;min-height:42px;padding:0;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle}
+.top-actions .settings-trigger{width:42px;min-width:42px}
+.top-actions .icon-button svg{width:20px;height:20px;display:block;flex:none}
+.top-actions .sound-toggle{width:68px;min-width:68px;gap:5px;font-size:12px;font-weight:800}
+.sound-toggle .sound-wave{display:none}
+.sound-toggle[aria-pressed="true"]{color:#fff0d6;background:rgba(224,143,85,.23);border-color:#e3a275}
+.sound-toggle[aria-pressed="true"] .sound-wave{display:block}
+.sound-toggle[aria-pressed="true"] .sound-slash{display:none}
+.sound-state{min-width:12px;text-align:center;line-height:1}
+.top-actions .icon-button:active{transform:scale(.95)}
+@media(max-width:700px){.top-actions .icon-button{height:42px;min-height:42px}.top-actions .settings-trigger{width:42px;min-width:42px}}
+
 .game-dialog{width:min(530px,calc(100% - 24px));max-height:calc(100dvh - 26px);overflow:auto;padding:28px;border:2px solid #e3c596;border-radius:19px;background:#f4ead7;color:#294347;box-shadow:0 30px 80px rgba(4,18,20,.5),inset 0 0 0 4px rgba(255,250,236,.65)}
 .game-dialog::backdrop{background:rgba(5,25,27,.72);backdrop-filter:blur(5px)}
 .dialog-overline{color:#ad6b46;font-size:11px;font-weight:800;letter-spacing:.06em}.dialog-overline span{margin:0 5px;color:#b59d7f}
@@ -332,7 +346,7 @@ h1{font-family:MovingDisplay,NotoSC,sans-serif;color:#fff4e2;font-weight:400;fon
       </div>
       <div class="top-actions">
         <span class="series-label">倾斜手机，让物件落进纸箱</span>
-        <button class="icon-button" id="soundButton" aria-label="开启声音" aria-pressed="false" title="声音">♪</button>
+        <button class="icon-button sound-toggle" id="soundButton" aria-label="开启游戏音效，当前已关闭" aria-pressed="false" title="音效已关闭" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path class="sound-wave" d="M16 9a4 4 0 0 1 0 6m2.5-9a8 8 0 0 1 0 12"/><path class="sound-slash" d="m17 9 4 6m0-6-4 6"/></svg><span class="sound-state" id="soundState">关</span></button>
         <button class="icon-button settings-trigger" id="settingsButton" aria-label="打开游戏设置" title="游戏设置"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 2.7h3l.5 2.1a7.7 7.7 0 0 1 1.7.7l1.9-1.1 2.1 2.1-1.1 1.9c.3.5.6 1.1.7 1.7l2.1.5v3l-2.1.5a7.7 7.7 0 0 1-.7 1.7l1.1 1.9-2.1 2.1-1.9-1.1c-.5.3-1.1.6-1.7.7l-.5 2.1h-3l-.5-2.1a7.7 7.7 0 0 1-1.7-.7l-1.9 1.1-2.1-2.1 1.1-1.9a7.7 7.7 0 0 1-.7-1.7l-2.1-.5v-3l2.1-.5c.1-.6.4-1.2.7-1.7L4.4 6.5l2.1-2.1 1.9 1.1c.5-.3 1.1-.6 1.7-.7z"/><circle cx="12" cy="12" r="3.1"/></svg></button>
       </div>
     </header>
@@ -433,7 +447,7 @@ h1{font-family:MovingDisplay,NotoSC,sans-serif;color:#fff4e2;font-weight:400;fon
         <li><strong>← / →</strong> 转动重力</li>
         <li><strong>Z</strong> 撤销上一步</li>
         <li><strong>R</strong> 重新开始</li>
-        <li><strong>M</strong> 开关声音</li>
+        <li><strong>M</strong> 开关游戏音效</li>
       </ul>
       <button class="button button-primary dialog-start">知道了，开始搬家</button>
     </form>
@@ -515,7 +529,7 @@ h1{font-family:MovingDisplay,NotoSC,sans-serif;color:#fff4e2;font-weight:400;fon
     turnLeft: $('turnLeft'), turnRight: $('turnRight'), undoButton: $('undoButton'), resetButton: $('resetButton'),
     railTip: $('railTip'), stageNote: $('stageNote'), result: $('result'), resultTitle: $('resultTitle'),
     resultText: $('resultText'), resultKicker: $('resultKicker'), nextButton: $('nextButton'),
-    retryResult: $('retryResult'), soundButton: $('soundButton'), helpButton: $('helpButton'), helpDialog: $('helpDialog'),
+    retryResult: $('retryResult'), soundButton: $('soundButton'), soundState: $('soundState'), helpButton: $('helpButton'), helpDialog: $('helpDialog'),
     startDialog: $('startDialog'), startMotion: $('startMotion'), startButtons: $('startButtons'),
     settingsDialog: $('settingsDialog'), settingsButton: $('settingsButton'), settingsClose: $('settingsClose'),
     modeMotion: $('modeMotion'), modeButtons: $('modeButtons'), motionStatus: $('motionStatus'),
@@ -630,7 +644,9 @@ h1{font-family:MovingDisplay,NotoSC,sans-serif;color:#fff4e2;font-weight:400;fon
 
   function acceptMotion(x, y, kind) {
     if (state.motionMode !== 'waiting' && state.motionMode !== 'on') return;
-    if (kind === 'orientation' && state.motionKind === 'motion') return;
+    // Tilt angles describe the phone's direction directly. Prefer them when
+    // both event streams are available, then fall back to acceleration.
+    if (kind === 'motion' && state.motionKind === 'orientation' && performance.now() - state.motionLastAt < 1000) return;
     if (!Number.isFinite(x) || !Number.isFinite(y)) return;
     if (window.innerWidth > window.innerHeight && window.innerWidth < 900) {
       elements.motionStatus.textContent = '请将手机竖屏，画面和重力方向更容易对应。';
@@ -654,15 +670,15 @@ h1{font-family:MovingDisplay,NotoSC,sans-serif;color:#fff4e2;font-weight:400;fon
   function onDeviceMotion(event) {
     const a = event.accelerationIncludingGravity;
     if (!a || !Number.isFinite(a.x) || !Number.isFinite(a.y)) return;
-    // Device coordinates: x points right, y points toward the phone's top.
-    // Proper acceleration is opposite physical gravity; canvas y points down.
-    acceptMotion(-a.x / 9.81 * 1.45, a.y / 9.81 * 1.45, 'motion');
+    // The target phone reports the face-on tilt opposite to the canvas axes.
+    // Match the observed upright/down and side-low/sideways behavior.
+    acceptMotion(a.x / 9.81 * 1.45, -a.y / 9.81 * 1.45, 'motion');
   }
 
   function onDeviceOrientation(event) {
     if (!Number.isFinite(event.beta) || !Number.isFinite(event.gamma)) return;
-    acceptMotion(Math.sin(event.gamma * Math.PI / 180) * 1.45,
-      Math.sin(event.beta * Math.PI / 180) * 1.45, 'orientation');
+    acceptMotion(-Math.sin(event.gamma * Math.PI / 180) * 1.45,
+      -Math.sin(event.beta * Math.PI / 180) * 1.45, 'orientation');
   }
 
   function roundRect(x, y, w, h, r, fill, stroke, lw = 1) {
@@ -1275,8 +1291,9 @@ h1{font-family:MovingDisplay,NotoSC,sans-serif;color:#fff4e2;font-weight:400;fon
   function toggleSound() {
     state.sound = !state.sound;
     elements.soundButton.setAttribute('aria-pressed', String(state.sound));
-    elements.soundButton.setAttribute('aria-label', state.sound ? '关闭声音' : '开启声音');
-    elements.soundButton.textContent = state.sound ? '♫' : '♪';
+    elements.soundButton.setAttribute('aria-label', state.sound ? '关闭游戏音效，当前已开启' : '开启游戏音效，当前已关闭');
+    elements.soundButton.title = state.sound ? '音效已开启' : '音效已关闭';
+    elements.soundState.textContent = state.sound ? '开' : '关';
     if (state.sound) sound('collect');
   }
 

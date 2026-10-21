@@ -97,6 +97,20 @@ h1{font-family:MovingDisplay,NotoSC,sans-serif;color:#fff4e2;font-weight:400;fon
 @media(max-width:700px){.control-panel{margin-top:14px}.turn-button{height:51px}.footer{margin-top:12px}.settings-trigger{width:38px;height:38px}}
 @media(max-width:390px){.turn-controls{gap:6px}.turn-button{font-size:10px}.gravity-indicator{width:72px}.indicator-caption,.indicator-value{font-size:9px}}
 
+/* The top actions share one visual center; sound state remains legible on phones. */
+.top-actions{gap:8px}
+.top-actions .icon-button{height:42px;min-height:42px;padding:0;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle}
+.top-actions .settings-trigger{width:42px;min-width:42px}
+.top-actions .icon-button svg{width:20px;height:20px;display:block;flex:none}
+.top-actions .sound-toggle{width:68px;min-width:68px;gap:5px;font-size:12px;font-weight:800}
+.sound-toggle .sound-wave{display:none}
+.sound-toggle[aria-pressed="true"]{color:#fff0d6;background:rgba(224,143,85,.23);border-color:#e3a275}
+.sound-toggle[aria-pressed="true"] .sound-wave{display:block}
+.sound-toggle[aria-pressed="true"] .sound-slash{display:none}
+.sound-state{min-width:12px;text-align:center;line-height:1}
+.top-actions .icon-button:active{transform:scale(.95)}
+@media(max-width:700px){.top-actions .icon-button{height:42px;min-height:42px}.top-actions .settings-trigger{width:42px;min-width:42px}}
+
 .game-dialog{width:min(530px,calc(100% - 24px));max-height:calc(100dvh - 26px);overflow:auto;padding:28px;border:2px solid #e3c596;border-radius:19px;background:#f4ead7;color:#294347;box-shadow:0 30px 80px rgba(4,18,20,.5),inset 0 0 0 4px rgba(255,250,236,.65)}
 .game-dialog::backdrop{background:rgba(5,25,27,.72);backdrop-filter:blur(5px)}
 .dialog-overline{color:#ad6b46;font-size:11px;font-weight:800;letter-spacing:.06em}.dialog-overline span{margin:0 5px;color:#b59d7f}

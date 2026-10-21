@@ -68,7 +68,7 @@
     turnLeft: $('turnLeft'), turnRight: $('turnRight'), undoButton: $('undoButton'), resetButton: $('resetButton'),
     railTip: $('railTip'), stageNote: $('stageNote'), result: $('result'), resultTitle: $('resultTitle'),
     resultText: $('resultText'), resultKicker: $('resultKicker'), nextButton: $('nextButton'),
-    retryResult: $('retryResult'), soundButton: $('soundButton'), helpButton: $('helpButton'), helpDialog: $('helpDialog'),
+    retryResult: $('retryResult'), soundButton: $('soundButton'), soundState: $('soundState'), helpButton: $('helpButton'), helpDialog: $('helpDialog'),
     startDialog: $('startDialog'), startMotion: $('startMotion'), startButtons: $('startButtons'),
     settingsDialog: $('settingsDialog'), settingsButton: $('settingsButton'), settingsClose: $('settingsClose'),
     modeMotion: $('modeMotion'), modeButtons: $('modeButtons'), motionStatus: $('motionStatus'),
@@ -183,7 +183,9 @@
 
   function acceptMotion(x, y, kind) {
     if (state.motionMode !== 'waiting' && state.motionMode !== 'on') return;
-    if (kind === 'orientation' && state.motionKind === 'motion') return;
+    // Tilt angles describe the phone's direction directly. Prefer them when
+    // both event streams are available, then fall back to acceleration.
+    if (kind === 'motion' && state.motionKind === 'orientation' && performance.now() - state.motionLastAt < 1000) return;
     if (!Number.isFinite(x) || !Number.isFinite(y)) return;
     if (window.innerWidth > window.innerHeight && window.innerWidth < 900) {
       elements.motionStatus.textContent = '请将手机竖屏，画面和重力方向更容易对应。';
@@ -207,15 +209,15 @@
   function onDeviceMotion(event) {
     const a = event.accelerationIncludingGravity;
     if (!a || !Number.isFinite(a.x) || !Number.isFinite(a.y)) return;
-    // Device coordinates: x points right, y points toward the phone's top.
-    // Proper acceleration is opposite physical gravity; canvas y points down.
-    acceptMotion(-a.x / 9.81 * 1.45, a.y / 9.81 * 1.45, 'motion');
+    // The target phone reports the face-on tilt opposite to the canvas axes.
+    // Match the observed upright/down and side-low/sideways behavior.
+    acceptMotion(a.x / 9.81 * 1.45, -a.y / 9.81 * 1.45, 'motion');
   }
 
   function onDeviceOrientation(event) {
     if (!Number.isFinite(event.beta) || !Number.isFinite(event.gamma)) return;
-    acceptMotion(Math.sin(event.gamma * Math.PI / 180) * 1.45,
-      Math.sin(event.beta * Math.PI / 180) * 1.45, 'orientation');
+    acceptMotion(-Math.sin(event.gamma * Math.PI / 180) * 1.45,
+      -Math.sin(event.beta * Math.PI / 180) * 1.45, 'orientation');
   }
 
   function roundRect(x, y, w, h, r, fill, stroke, lw = 1) {
@@ -828,8 +830,9 @@
   function toggleSound() {
     state.sound = !state.sound;
     elements.soundButton.setAttribute('aria-pressed', String(state.sound));
-    elements.soundButton.setAttribute('aria-label', state.sound ? '关闭声音' : '开启声音');
-    elements.soundButton.textContent = state.sound ? '♫' : '♪';
+    elements.soundButton.setAttribute('aria-label', state.sound ? '关闭游戏音效，当前已开启' : '开启游戏音效，当前已关闭');
+    elements.soundButton.title = state.sound ? '音效已开启' : '音效已关闭';
+    elements.soundState.textContent = state.sound ? '开' : '关';
     if (state.sound) sound('collect');
   }
 
