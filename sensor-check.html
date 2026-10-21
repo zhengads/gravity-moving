@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#173d40">
+  <title>重力搬家 · 传感器诊断</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;padding:24px 16px 40px;background:#173d40;color:#f7ead1;font:16px/1.55 system-ui,"PingFang SC","Microsoft YaHei",sans-serif}
+    main{max-width:560px;margin:auto}
+    h1{font-size:28px;line-height:1.3;margin:8px 0 8px}
+    p{margin:0 0 18px;color:#d1dfd1}
+    .eyebrow{font-size:12px;letter-spacing:.12em;color:#edb485}
+    .card{background:#244c4b;border:1px solid #648a7d;border-radius:16px;padding:18px;margin-top:14px}
+    .card h2{font-size:17px;margin:0 0 12px}
+    button{min-height:48px;border:0;border-radius:10px;background:#e8b17c;color:#253e3e;font:700 15px/1.2 system-ui,"PingFang SC","Microsoft YaHei",sans-serif;padding:11px 16px;cursor:pointer}
+    button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+    button:disabled{opacity:.55;cursor:default}
+    .secondary{background:#d9e9dc}
+    .steps{display:grid;gap:10px}
+    .steps button{text-align:left}
+    .values{display:grid;grid-template-columns:1fr auto;gap:7px 12px;font-variant-numeric:tabular-nums}
+    .values span:nth-child(2n){font-weight:700;text-align:right}
+    pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#112e30;border:1px solid #52726c;border-radius:10px;padding:14px;color:#fff4df;font:13px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;min-height:160px}
+    #status{min-height:28px;margin:12px 0 0;color:#f6c791}
+    .fine{font-size:12px;color:#b8cabe;margin:16px 0 0}
+  </style>
+</head>
+<body><main>
+  <div class="eyebrow">重力搬家 / SENSOR CHECK</div>
+  <h1>确认手机实际给出的方向</h1>
+  <p>请用刚才玩游戏的同一部手机、同一个浏览器打开。此页只在手机里读取读数，不会自动上传任何数据。</p>
+  <div class="card"><h2>1. 开始读取</h2>
+    <button id="start" type="button">允许并读取传感器</button>
+    <div id="status" role="status">等待开始</div>
+    <div class="values" aria-live="off">
+      <span>屏幕角度</span><span id="angle">—</span>
+      <span>倾角 β / γ</span><span id="orientation">—</span>
+      <span>加速度 x / y / z</span><span id="motion">—</span>
+      <span>事件数量 倾角 / 加速度</span><span id="counts">0 / 0</span>
+    </div>
+  </div>
+  <div class="card"><h2>2. 记录三个姿势</h2>
+    <p>按下按钮后有 3 秒摆好手机；保持屏幕朝向自己。先像平时玩游戏那样竖直正放，再让右侧边缘低于左侧，最后倒转手机。</p>
+    <div class="steps">
+      <button class="secondary" data-pose="upright" type="button">记录 ① 正放（顶部朝上）</button>
+      <button class="secondary" data-pose="right-low" type="button">记录 ② 右侧压低</button>
+      <button class="secondary" data-pose="upside-down" type="button">记录 ③ 倒放（顶部朝下）</button>
+    </div>
+  </div>
+  <div class="card"><h2>3. 复制结果</h2>
+    <pre id="report">还没有记录。先点“允许并读取传感器”。</pre>
+    <button id="copy" type="button">复制诊断结果</button>
+    <p class="fine">把复制的文字粘贴回聊天即可。没有传感器读数也请复制，状态会说明问题。</p>
+  </div>
+</main>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const state = { orientation:null, motion:null, oCount:0, mCount:0, records:{}, pending:false, started:false };
+  const format = value => Number.isFinite(value) ? value.toFixed(1) : 'null';
+  const angle = () => Number.isFinite(screen.orientation?.angle) ? screen.orientation.angle :
+    Number.isFinite(window.orientation) ? window.orientation : 'unknown';
+  const info = () => ({ angle:angle(), viewport:`${innerWidth}x${innerHeight}`,
+    orientation:state.orientation ? {beta:format(state.orientation.beta),gamma:format(state.orientation.gamma)} : null,
+    motion:state.motion ? {x:format(state.motion.x),y:format(state.motion.y),z:format(state.motion.z)} : null,
+    counts:`${state.oCount}/${state.mCount}` });
+  const render = () => {
+    $('angle').textContent = `${angle()}°`;
+    $('orientation').textContent = state.orientation ? `${format(state.orientation.beta)} / ${format(state.orientation.gamma)}` : '—';
+    $('motion').textContent = state.motion ? `${format(state.motion.x)} / ${format(state.motion.y)} / ${format(state.motion.z)}` : '—';
+    $('counts').textContent = `${state.oCount} / ${state.mCount}`;
+    $('report').textContent = JSON.stringify({version:'sensor-check-1', poses:state.records, current:info()},null,2);
+  };
+  const setStatus = message => { $('status').textContent=message; };
+  window.addEventListener('deviceorientation', event => {
+    if (!Number.isFinite(event.beta) || !Number.isFinite(event.gamma)) return;
+    state.orientation={beta:event.beta,gamma:event.gamma}; state.oCount++; render();
+  });
+  window.addEventListener('devicemotion', event => {
+    const a=event.accelerationIncludingGravity;
+    if (!a || !Number.isFinite(a.x) || !Number.isFinite(a.y)) return;
+    state.motion={x:a.x,y:a.y,z:a.z}; state.mCount++; render();
+  });
+  $('start').addEventListener('click', async () => {
+    const requests=[];
+    for (const SensorEvent of [window.DeviceOrientationEvent,window.DeviceMotionEvent]) {
+      if (typeof SensorEvent?.requestPermission === 'function') {
+        try { requests.push(SensorEvent.requestPermission()); }
+        catch (error) { requests.push(Promise.reject(error)); }
+      }
+    }
+    state.started=true;
+    if (!isSecureContext) { setStatus('需要 HTTPS；请用 GitHub Pages 链接打开。'); return; }
+    if (requests.length) {
+      const result=await Promise.allSettled(requests);
+      if (result.every(item => item.status !== 'fulfilled' || item.value !== 'granted')) { setStatus('未获得传感器权限，请检查浏览器设置。'); return; }
+    }
+    setStatus('已请求权限。缓慢转动手机；如果数字不变，请检查浏览器的运动传感器权限。');
+  });
+  document.querySelectorAll('[data-pose]').forEach(button => button.addEventListener('click', () => {
+    if (state.pending) return;
+    if (!state.started) { setStatus('请先点“允许并读取传感器”。'); return; }
+    state.pending=true;
+    const key=button.dataset.pose;
+    const label=button.textContent.trim();
+    setStatus(`${label}：3 秒内摆好手机并保持不动…`);
+    setTimeout(() => {
+      state.records[key]=info();
+      state.pending=false;
+      render();
+      setStatus(`${label}：已记录。`);
+    },3000);
+  }));
+  $('copy').addEventListener('click', async () => {
+    render();
+    try { await navigator.clipboard.writeText($('report').textContent); setStatus('诊断结果已复制，请粘贴回聊天。'); }
+    catch { setStatus('复制失败，请长按下方文字并手动复制。'); }
+  });
+  render();
+})();
+</script></body></html>

@@ -209,15 +209,16 @@
   function onDeviceMotion(event) {
     const a = event.accelerationIncludingGravity;
     if (!a || !Number.isFinite(a.x) || !Number.isFinite(a.y)) return;
-    // The target phone reports the face-on tilt opposite to the canvas axes.
-    // Match the observed upright/down and side-low/sideways behavior.
-    acceptMotion(a.x / 9.81 * 1.45, -a.y / 9.81 * 1.45, 'motion');
+    // The accelerometer reports proper acceleration, opposite to gravity.
+    // Device y points toward the top; canvas y points down.
+    acceptMotion(-a.x / 9.81 * 1.45, a.y / 9.81 * 1.45, 'motion');
   }
 
   function onDeviceOrientation(event) {
     if (!Number.isFinite(event.beta) || !Number.isFinite(event.gamma)) return;
-    acceptMotion(-Math.sin(event.gamma * Math.PI / 180) * 1.45,
-      -Math.sin(event.beta * Math.PI / 180) * 1.45, 'orientation');
+    // Positive beta is upright (down on screen); positive gamma tips right.
+    acceptMotion(Math.sin(event.gamma * Math.PI / 180) * 1.45,
+      Math.sin(event.beta * Math.PI / 180) * 1.45, 'orientation');
   }
 
   function roundRect(x, y, w, h, r, fill, stroke, lw = 1) {
