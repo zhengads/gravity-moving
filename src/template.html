@@ -18,7 +18,7 @@
       </div>
       <div class="top-actions">
         <span class="series-label">倾斜手机，让物件落进纸箱</span>
-        <button class="icon-button sound-toggle" id="soundButton" aria-label="开启游戏音效，当前已关闭" aria-pressed="false" title="音效已关闭" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path class="sound-wave" d="M16 9a4 4 0 0 1 0 6m2.5-9a8 8 0 0 1 0 12"/><path class="sound-slash" d="m17 9 4 6m0-6-4 6"/></svg><span class="sound-state" id="soundState">关</span></button>
+        <button class="icon-button sound-toggle" id="soundButton" aria-label="开启游戏音效，当前已关闭" aria-pressed="false" title="音效已关闭" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path class="sound-wave" d="M16 9a4 4 0 0 1 0 6m2.5-9a8 8 0 0 1 0 12"/><path class="sound-slash" d="m17 9 4 6m0-6-4 6"/></svg></button>
         <button class="icon-button settings-trigger" id="settingsButton" aria-label="打开游戏设置" title="游戏设置"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 2.7h3l.5 2.1a7.7 7.7 0 0 1 1.7.7l1.9-1.1 2.1 2.1-1.1 1.9c.3.5.6 1.1.7 1.7l2.1.5v3l-2.1.5a7.7 7.7 0 0 1-.7 1.7l1.1 1.9-2.1 2.1-1.9-1.1c-.5.3-1.1.6-1.7.7l-.5 2.1h-3l-.5-2.1a7.7 7.7 0 0 1-1.7-.7l-1.9 1.1-2.1-2.1 1.1-1.9a7.7 7.7 0 0 1-.7-1.7l-2.1-.5v-3l2.1-.5c.1-.6.4-1.2.7-1.7L4.4 6.5l2.1-2.1 1.9 1.1c.5-.3 1.1-.6 1.7-.7z"/><circle cx="12" cy="12" r="3.1"/></svg></button>
       </div>
     </header>
@@ -48,9 +48,7 @@
         <div class="result" id="result" hidden>
           <div class="result-card">
             <div class="result-stamp" aria-hidden="true">✓</div>
-            <p class="result-kicker" id="resultKicker">打包完成</p>
-            <h2 id="resultTitle">这一间，收好了。</h2>
-            <p id="resultText">一切都找到了自己的位置。</p>
+            <h2 id="resultTitle">打包完成</h2>
             <div class="result-actions">
               <button class="button button-secondary" id="retryResult">再玩一次</button>
               <button class="button button-primary" id="nextButton">下一间 <span aria-hidden="true">↗</span></button>
@@ -73,7 +71,6 @@
       </div>
     </section>
 
-    <footer class="footer"><span>房间不动，重力听你的。</span><span>一个独立 HTML 小游戏</span></footer>
   </main>
 
   <dialog id="startDialog" class="game-dialog start-dialog" aria-labelledby="startTitle">

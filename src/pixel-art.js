@@ -402,21 +402,38 @@ function createPixelArt(ctx, state) {
     const age = last ? time - last.startedAt : -1000;
     const shake = age > 300 && age < 650 ? Math.round(Math.sin(age * .09) * (1 - Math.abs(age - 475) / 175)) : 0;
     const x = 198 + shake;
-    worldPixel(x + 1, 131, 34, 20, '#4c4050');
-    worldPixel(x + 3, 134, 30, 15, '#9d6753');
-    worldPixel(x + 5, 136, 25, 11, '#3a3546');
-    worldPixel(x + 2, 130, 32, 3, '#ecc18b');
-    worldPixel(x + 5, 131, 23, 1, '#fff0b4');
-    worldPixel(x + 2, 148, 32, 3, '#9a6357');
-    worldPixel(x + 31, 131, 3, 20, '#6a4b52');
+    // The carton is open on its left and upper face, matching the routes by
+    // which pieces can actually enter. Its back and floor sit behind them.
+    worldPixel(x - 5, 149, 42, 2, '#3f4350');
+    worldPixel(x + 1, 132, 35, 18, '#5a4143');
+    worldPixel(x + 2, 133, 32, 15, '#bb8058');
+    worldPixel(x + 2, 134, 30, 12, '#70474a');
+    worldPixel(x + 3, 135, 27, 10, '#4a3d47');
+    worldPixel(x + 29, 135, 3, 10, '#815147');
+    worldPixel(x + 32, 132, 4, 18, '#a5694a');
+    worldPixel(x + 33, 134, 2, 13, '#d29561');
+    worldPixel(x + 1, 127, 33, 4, '#795046');
+    worldPixel(x + 2, 127, 30, 2, '#f0bd7b');
+    worldPixel(x + 4, 129, 27, 2, '#d89966');
+    worldPixel(x - 5, 129, 9, 2, '#7a5047');
+    worldPixel(x - 7, 126, 10, 3, '#e9af71');
+    worldPixel(x - 8, 125, 9, 1, '#f6d195');
     return () => {
-      worldPixel(x + 17, 134, 16, 15, '#77525a');
-      worldPixel(x + 18, 134, 14, 13, '#c98e64');
-      worldPixel(x + 19, 135, 12, 3, '#e7b279');
-      worldPixel(x + 18, 144, 14, 3, '#a9735c');
-      worldPixel(x + 23, 138, 5, 4, '#f3dab0');
-      worldPixel(x + 22, 130, 11, 3, '#e9b47b');
-      worldPixel(x + 3, 148, 30, 2, '#e0aa74');
+      // A low near-side wall masks the lower edge of an arriving item. The
+      // mouth stays unobstructed, so rolling in no longer crosses a solid side.
+      worldPixel(x + 1, 144, 34, 7, '#604447');
+      worldPixel(x + 2, 145, 31, 5, '#cf925f');
+      worldPixel(x + 3, 145, 29, 1, '#f4c786');
+      worldPixel(x + 4, 148, 26, 1, '#a5694a');
+      worldPixel(x + 14, 146, 1, 3, '#825244');
+      worldPixel(x + 13, 146, 3, 1, '#825244');
+      worldPixel(x + 19, 146, 1, 3, '#825244');
+      worldPixel(x + 18, 146, 3, 1, '#825244');
+      worldPixel(x + 25, 145, 2, 5, '#edbd7e');
+      worldPixel(x - 6, 144, 8, 2, '#d29461');
+      worldPixel(x - 9, 146, 11, 2, '#e7ad72');
+      worldPixel(x - 8, 148, 10, 1, '#84554a');
+      worldPixel(x + 31, 144, 4, 7, '#a96b4f');
     };
   }
 
@@ -436,11 +453,11 @@ function createPixelArt(ctx, state) {
         ctx.save(); ctx.globalAlpha = 1 - age / 380;
         ctx.strokeStyle = '#fff0ab'; ctx.lineWidth = 8;
         const r = 16 + age / 14;
-        ctx.strokeRect(842 - r, 550 - r * .6, r * 2, r * 1.2);
+        ctx.strokeRect(874 - r, 550 - r * .6, r * 2, r * 1.2);
         ctx.restore();
       }
       for (let i = 0; i < 20; i++) {
-        const x = 858 + ((i * 37) % 29 - 14) * 8 * t;
+        const x = 874 + ((i * 37) % 29 - 14) * 8 * t;
         const y = 542 - (110 + (i * 11) % 70) * t + 115 * t * t;
         ctx.save(); ctx.globalAlpha = Math.min(1, (900 - age) / 210);
         fill(ctx, Math.round(x / P) * P, Math.round(y / P) * P, 8, 8, ['#ffe2a3', '#ec9b6a', '#a8d6a2', '#fff4d1'][i % 4]);

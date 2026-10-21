@@ -93,8 +93,8 @@
     objectiveList: $('objectiveList'),
     turnLeft: $('turnLeft'), turnRight: $('turnRight'), undoButton: $('undoButton'), resetButton: $('resetButton'),
     railTip: $('railTip'), stageNote: $('stageNote'), result: $('result'), resultTitle: $('resultTitle'),
-    resultText: $('resultText'), resultKicker: $('resultKicker'), nextButton: $('nextButton'),
-    retryResult: $('retryResult'), soundButton: $('soundButton'), soundState: $('soundState'), helpButton: $('helpButton'), helpDialog: $('helpDialog'),
+    nextButton: $('nextButton'),
+    retryResult: $('retryResult'), soundButton: $('soundButton'), helpButton: $('helpButton'), helpDialog: $('helpDialog'),
     startDialog: $('startDialog'), startMotion: $('startMotion'), startButtons: $('startButtons'),
     settingsDialog: $('settingsDialog'), settingsButton: $('settingsButton'), settingsClose: $('settingsClose'),
     modeMotion: $('modeMotion'), modeButtons: $('modeButtons'), motionStatus: $('motionStatus'),
@@ -453,9 +453,7 @@
   }
   function win() {
     updateUI();
-    elements.resultKicker.textContent = state.level === LEVELS.length - 1 ? `${LEVELS.length} 间房，全部收好` : '打包完成';
-    elements.resultTitle.textContent = state.level === LEVELS.length - 1 ? '搬家完成！' : '这一间，收好了。';
-    elements.resultText.textContent = `${state.motionMode === 'on' ? '通过手机倾斜改变重力。' : `改变了 ${state.turns} 次重力方向。`}${state.level === LEVELS.length - 1 ? '所有物品都已收纳，可以放心搬进新家。' : '下一间房还有一些小麻烦。'}`;
+    elements.resultTitle.textContent = '打包完成';
     elements.nextButton.textContent = state.level === LEVELS.length - 1 ? '再玩一遍 ↗' : '下一间 ↗';
     elements.result.hidden = false;
     sound('win');
@@ -561,7 +559,7 @@
       if (progress >= 1) continue;
       const eased = 1 - Math.pow(1 - progress, 3);
       const item = LEVELS[state.level].items.find(i => i.id === capture.id);
-      const body = { position: { x: capture.x + (880 - capture.x) * eased, y: capture.y + (554 - capture.y) * eased }, angle: capture.angle + eased * .18 };
+      const body = { position: { x: capture.x + (880 - capture.x) * eased, y: capture.y + (570 - capture.y) * eased }, angle: capture.angle + eased * .18 };
       art.drawItem(item, body, time, 1 - eased * .55, 1 - eased);
     }
     boxFront();
@@ -616,7 +614,6 @@
     elements.soundButton.setAttribute('aria-pressed', String(state.sound));
     elements.soundButton.setAttribute('aria-label', state.sound ? '关闭游戏音效，当前已开启' : '开启游戏音效，当前已关闭');
     elements.soundButton.title = state.sound ? '音效已开启' : '音效已关闭';
-    elements.soundState.textContent = state.sound ? '开' : '关';
     if (state.sound) sound('ui');
   }
 
