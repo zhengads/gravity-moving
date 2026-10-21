@@ -273,17 +273,15 @@ h1{font-family:MovingDisplay,NotoSC,sans-serif;color:#fff4e2;font-weight:400;fon
 .turn-button.turn-fired,.turn-button.turn-fired:disabled{transform:translateY(4px);box-shadow:0 1px 0 #a8815d,0 0 0 3px rgba(239,163,109,.34);background:#fff0d5;opacity:1}
 .turn-button.turn-fired .turn-symbol{animation:turn-symbol-pop .45s cubic-bezier(.2,.8,.2,1)}
 .indicator-arrow.arrow-fired{animation:gravity-arrow-pop .5s cubic-bezier(.15,.75,.2,1)}
-.stage-frame.gravity-pulse::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(var(--pulse-angle),transparent 34%,rgba(255,208,143,.24) 50%,transparent 66%);animation:gravity-wash .52s ease-out both}
 .stage-frame.celebrating{animation:stage-celebrate 1.18s ease-out both}
 .result:not([hidden]) .result-card{animation:result-enter .45s cubic-bezier(.2,.82,.22,1) both}
 .result:not([hidden]) .result-stamp{animation:stamp-pop .52s .15s cubic-bezier(.18,1.6,.35,1) both}
 @keyframes turn-symbol-pop{0%{transform:rotate(-22deg) scale(.7)}45%{transform:rotate(9deg) scale(1.24)}100%{transform:rotate(0) scale(1)}}
 @keyframes gravity-arrow-pop{0%{transform:scale(.55);opacity:.5}52%{transform:scale(1.5);filter:drop-shadow(0 0 7px #ffc894)}100%{transform:scale(1);opacity:1}}
-@keyframes gravity-wash{0%{opacity:0;transform:translateX(-18%)}30%{opacity:1}100%{opacity:0;transform:translateX(18%)}}
 @keyframes stage-celebrate{0%,100%{box-shadow:0 1px 0 #e2bd8c,inset 0 0 0 1px #cda77a,0 33px 55px rgba(3,16,18,.46)}45%{box-shadow:0 1px 0 #ffe8b7,inset 0 0 0 3px #ffe6a8,0 0 45px rgba(255,205,137,.65),0 33px 55px rgba(3,16,18,.46)}}
 @keyframes result-enter{0%{opacity:0;transform:translateY(24px) scale(.94)}100%{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes stamp-pop{0%{transform:rotate(-18deg) scale(.3)}70%{transform:rotate(3deg) scale(1.17)}100%{transform:rotate(-8deg) scale(1)}}
-@media(prefers-reduced-motion:reduce){.turn-button.turn-fired,.turn-button.turn-fired:disabled{box-shadow:0 1px 0 #a8815d,0 0 0 3px rgba(239,163,109,.5)}.stage-frame.gravity-pulse::before{animation:none;opacity:.55}.stage-frame.celebrating{animation:none;box-shadow:0 0 0 3px #ffe6a8,0 0 35px rgba(255,205,137,.4)}}
+@media(prefers-reduced-motion:reduce){.turn-button.turn-fired,.turn-button.turn-fired:disabled{box-shadow:0 1px 0 #a8815d,0 0 0 3px rgba(239,163,109,.5)}.stage-frame.celebrating{animation:none;box-shadow:0 0 0 3px #ffe6a8,0 0 35px rgba(255,205,137,.4)}}
 
 /* The room stays upright. Only the simulated gravity vector changes. */
 .stage-frame{flex:none;aspect-ratio:1000/680}
@@ -386,6 +384,17 @@ body{background:linear-gradient(180deg,#284353 0%,#192f3f 52%,#112633 100%)}
 @media(max-width:700px){.turn-controls{gap:9px}.turn-button{width:calc(50% - 5px)}.level-choices{grid-template-columns:repeat(3,minmax(0,1fr))}.cat-dialogue{gap:8px}.cat-avatar{width:65px;height:65px;border-width:3px}.cat-speech{padding:8px 11px;border-width:3px}.cat-speech p{font-size:12px;min-height:2.8em;margin:4px 0 6px}.cat-dialogue-foot button{min-height:32px;font-size:11px;padding:0 8px}.transition-cat{width:73px;height:73px}}
 @media(max-width:390px){.turn-button{width:calc(50% - 5px);font-size:12px}.level-choices{grid-template-columns:repeat(2,minmax(0,1fr))}.cat-avatar{width:56px;height:56px}.cat-speech p{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.cat-avatar,.transition-cat,.transition-track span{animation:none}.transition-track span{width:100%}}
+
+/* A calm, legible heading fits the choice dialog better than the display face. */
+.game-dialog h2{font-family:NotoSC,"Microsoft YaHei",sans-serif;font-size:32px;font-weight:800;letter-spacing:-.035em;line-height:1.28;text-wrap:balance}
+@media(max-width:500px){.game-dialog h2{font-size:27px}}
+
+.cat-speech p{position:relative}
+.cat-speech p::before{content:attr(data-full-text);visibility:hidden}
+.cat-speech p #catIntroTyped{position:absolute;inset:0}
+.cat-speech p.typing #catIntroTyped::after{content:"▌";display:inline;color:#b5724c;animation:dialogue-cursor .7s steps(2,end) infinite}
+@keyframes dialogue-cursor{50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.cat-speech p.typing #catIntroTyped::after{animation:none}}
 </style>
 </head>
 <body>
@@ -419,7 +428,7 @@ body{background:linear-gradient(180deg,#284353 0%,#192f3f 52%,#112633 100%)}
         <canvas id="gameCanvas" width="1000" height="680" role="img" tabindex="-1" aria-label="像素房间游戏画面"></canvas>
         <div class="stage-note" id="stageNote" aria-live="polite"></div>
         <div class="cat-intro" id="catIntro" hidden role="dialog" aria-modal="true" aria-labelledby="catIntroTitle">
-          <div class="cat-dialogue"><div class="cat-avatar" aria-hidden="true"><img id="catIntroImage" alt=""></div><div class="cat-speech"><span class="cat-speaker" id="catIntroTitle">窗边的小猫</span><p id="catIntroText"></p><div class="cat-dialogue-foot"><span id="catIntroStep"></span><button class="button button-primary" id="catIntroNext" type="button">继续 ↗</button></div></div></div>
+          <div class="cat-dialogue"><div class="cat-avatar" aria-hidden="true"><img id="catIntroImage" alt=""></div><div class="cat-speech"><span class="cat-speaker" id="catIntroTitle">窗边的小猫</span><p id="catIntroText"><span id="catIntroTyped" aria-hidden="true"></span></p><div class="cat-dialogue-foot"><span id="catIntroStep"></span><button class="button button-primary" id="catIntroNext" type="button">继续 ↗</button></div></div></div>
         </div>
         <div class="pixel-transition" id="pixelTransition" hidden aria-live="polite">
           <div class="transition-card"><div class="transition-cat"><img id="transitionCatImage" alt="小猫正在等待"></div><span class="transition-kicker" id="transitionKicker">下一间房</span><strong id="transitionRoom"></strong><p id="transitionTip"></p><div class="transition-track" aria-hidden="true"><span></span></div></div>
@@ -1089,7 +1098,7 @@ function createPixelArt(ctx, state) {
     settingsDialog: $('settingsDialog'), settingsButton: $('settingsButton'), settingsClose: $('settingsClose'),
     modeMotion: $('modeMotion'), modeButtons: $('modeButtons'), motionStatus: $('motionStatus'),
     levelButtons: [...document.querySelectorAll('.level-option')], controlPanel: document.querySelector('.control-panel'),
-    catIntro: $('catIntro'), catIntroText: $('catIntroText'), catIntroStep: $('catIntroStep'), catIntroNext: $('catIntroNext'),
+    catIntro: $('catIntro'), catIntroText: $('catIntroText'), catIntroTyped: $('catIntroTyped'), catIntroStep: $('catIntroStep'), catIntroNext: $('catIntroNext'),
     catIntroImage: $('catIntroImage'), pixelTransition: $('pixelTransition'), transitionCatImage: $('transitionCatImage'),
     transitionKicker: $('transitionKicker'), transitionRoom: $('transitionRoom'), transitionTip: $('transitionTip'),
   };
@@ -1101,7 +1110,7 @@ function createPixelArt(ctx, state) {
     captures: [], winAt: 0, turnFeedbackUntil: 0, celebrateUntil: 0,
     targetGravity: { x: 0, y: 1 }, displayedGravity: { x: 0, y: 1 },
     motionMode: 'off', motionKind: null, motionLastAt: 0, motionStartedAt: 0, started: false,
-    introStep: -1, transitionTimer: 0, transitioning: false, levels: LEVELS,
+    introStep: -1, introTypingTimer: 0, transitionTimer: 0, transitioning: false, levels: LEVELS,
   };
   const art = createPixelArt(ctx, state);
 
@@ -1267,7 +1276,6 @@ function createPixelArt(ctx, state) {
     state.celebrateUntil = 0;
     elements.turnLeft.classList.remove('turn-fired');
     elements.turnRight.classList.remove('turn-fired');
-    elements.stageFrame.classList.remove('gravity-pulse');
     elements.stageFrame.classList.remove('celebrating');
     state.history = restore?.history ?? [];
     state.busy = false;
@@ -1359,10 +1367,6 @@ function createPixelArt(ctx, state) {
     fired.classList.remove('turn-fired');
     void fired.offsetWidth;
     fired.classList.add('turn-fired');
-    elements.stageFrame.classList.remove('gravity-pulse');
-    void elements.stageFrame.offsetWidth;
-    elements.stageFrame.classList.add('gravity-pulse');
-    elements.stageFrame.style.setProperty('--pulse-angle', `${state.gravity * 90}deg`);
     state.settleSince = 0;
     sound('turn');
     note(`重力${DIRECTIONS[state.gravity].name}`);
@@ -1589,7 +1593,6 @@ function createPixelArt(ctx, state) {
       state.turnFeedbackUntil = 0;
       elements.turnLeft.classList.remove('turn-fired');
       elements.turnRight.classList.remove('turn-fired');
-      elements.stageFrame.classList.remove('gravity-pulse');
     }
     if (state.celebrateUntil && time >= state.celebrateUntil) {
       state.celebrateUntil = 0;
@@ -1620,7 +1623,28 @@ function createPixelArt(ctx, state) {
       state.motionMode === 'off' ? '按左、右按钮，每次让重力转 90°。房间不会跟着转，看看物件怎么滚动吧。' : '把手机朝想让物件去的方向倾斜；就像真的把东西放在掌心。',
       '后面的房间有更多物件和机关。木块能触发橙色开关；遇到困难可以撤销，也能在设置里选关。',
     ];
-    elements.catIntroText.textContent = lines[state.introStep];
+    clearInterval(state.introTypingTimer);
+    const line = lines[state.introStep];
+    elements.catIntroText.dataset.fullText = line;
+    elements.catIntroText.setAttribute('aria-label', line);
+    elements.catIntroTyped.textContent = '';
+    elements.catIntroText.classList.remove('typing');
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      elements.catIntroTyped.textContent = line;
+    } else {
+      const characters = [...line];
+      let length = 0;
+      elements.catIntroText.classList.add('typing');
+      state.introTypingTimer = setInterval(() => {
+        length++;
+        elements.catIntroTyped.textContent = characters.slice(0, length).join('');
+        if (length >= characters.length) {
+          clearInterval(state.introTypingTimer);
+          state.introTypingTimer = 0;
+          elements.catIntroText.classList.remove('typing');
+        }
+      }, 52);
+    }
     elements.catIntroStep.textContent = `${state.introStep + 1} / ${lines.length}`;
     elements.catIntroNext.textContent = state.introStep === lines.length - 1 ? '开始搬家 ↗' : '继续 ↗';
   }
@@ -1630,6 +1654,8 @@ function createPixelArt(ctx, state) {
       updateIntro();
       sound('ui');
     } else {
+      clearInterval(state.introTypingTimer);
+      state.introTypingTimer = 0;
       elements.catIntro.hidden = true;
       state.introStep = -1;
       if (state.motionMode === 'off') elements.turnRight.focus();

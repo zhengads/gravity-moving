@@ -99,7 +99,7 @@
     settingsDialog: $('settingsDialog'), settingsButton: $('settingsButton'), settingsClose: $('settingsClose'),
     modeMotion: $('modeMotion'), modeButtons: $('modeButtons'), motionStatus: $('motionStatus'),
     levelButtons: [...document.querySelectorAll('.level-option')], controlPanel: document.querySelector('.control-panel'),
-    catIntro: $('catIntro'), catIntroText: $('catIntroText'), catIntroStep: $('catIntroStep'), catIntroNext: $('catIntroNext'),
+    catIntro: $('catIntro'), catIntroText: $('catIntroText'), catIntroTyped: $('catIntroTyped'), catIntroStep: $('catIntroStep'), catIntroNext: $('catIntroNext'),
     catIntroImage: $('catIntroImage'), pixelTransition: $('pixelTransition'), transitionCatImage: $('transitionCatImage'),
     transitionKicker: $('transitionKicker'), transitionRoom: $('transitionRoom'), transitionTip: $('transitionTip'),
   };
@@ -111,7 +111,7 @@
     captures: [], winAt: 0, turnFeedbackUntil: 0, celebrateUntil: 0,
     targetGravity: { x: 0, y: 1 }, displayedGravity: { x: 0, y: 1 },
     motionMode: 'off', motionKind: null, motionLastAt: 0, motionStartedAt: 0, started: false,
-    introStep: -1, transitionTimer: 0, transitioning: false, levels: LEVELS,
+    introStep: -1, introTypingTimer: 0, transitionTimer: 0, transitioning: false, levels: LEVELS,
   };
   const art = createPixelArt(ctx, state);
 
@@ -277,7 +277,6 @@
     state.celebrateUntil = 0;
     elements.turnLeft.classList.remove('turn-fired');
     elements.turnRight.classList.remove('turn-fired');
-    elements.stageFrame.classList.remove('gravity-pulse');
     elements.stageFrame.classList.remove('celebrating');
     state.history = restore?.history ?? [];
     state.busy = false;
@@ -369,10 +368,6 @@
     fired.classList.remove('turn-fired');
     void fired.offsetWidth;
     fired.classList.add('turn-fired');
-    elements.stageFrame.classList.remove('gravity-pulse');
-    void elements.stageFrame.offsetWidth;
-    elements.stageFrame.classList.add('gravity-pulse');
-    elements.stageFrame.style.setProperty('--pulse-angle', `${state.gravity * 90}deg`);
     state.settleSince = 0;
     sound('turn');
     note(`重力${DIRECTIONS[state.gravity].name}`);
@@ -599,7 +594,6 @@
       state.turnFeedbackUntil = 0;
       elements.turnLeft.classList.remove('turn-fired');
       elements.turnRight.classList.remove('turn-fired');
-      elements.stageFrame.classList.remove('gravity-pulse');
     }
     if (state.celebrateUntil && time >= state.celebrateUntil) {
       state.celebrateUntil = 0;
@@ -630,7 +624,28 @@
       state.motionMode === 'off' ? '按左、右按钮，每次让重力转 90°。房间不会跟着转，看看物件怎么滚动吧。' : '把手机朝想让物件去的方向倾斜；就像真的把东西放在掌心。',
       '后面的房间有更多物件和机关。木块能触发橙色开关；遇到困难可以撤销，也能在设置里选关。',
     ];
-    elements.catIntroText.textContent = lines[state.introStep];
+    clearInterval(state.introTypingTimer);
+    const line = lines[state.introStep];
+    elements.catIntroText.dataset.fullText = line;
+    elements.catIntroText.setAttribute('aria-label', line);
+    elements.catIntroTyped.textContent = '';
+    elements.catIntroText.classList.remove('typing');
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      elements.catIntroTyped.textContent = line;
+    } else {
+      const characters = [...line];
+      let length = 0;
+      elements.catIntroText.classList.add('typing');
+      state.introTypingTimer = setInterval(() => {
+        length++;
+        elements.catIntroTyped.textContent = characters.slice(0, length).join('');
+        if (length >= characters.length) {
+          clearInterval(state.introTypingTimer);
+          state.introTypingTimer = 0;
+          elements.catIntroText.classList.remove('typing');
+        }
+      }, 52);
+    }
     elements.catIntroStep.textContent = `${state.introStep + 1} / ${lines.length}`;
     elements.catIntroNext.textContent = state.introStep === lines.length - 1 ? '开始搬家 ↗' : '继续 ↗';
   }
@@ -640,6 +655,8 @@
       updateIntro();
       sound('ui');
     } else {
+      clearInterval(state.introTypingTimer);
+      state.introTypingTimer = 0;
       elements.catIntro.hidden = true;
       state.introStep = -1;
       if (state.motionMode === 'off') elements.turnRight.focus();

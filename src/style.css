@@ -71,17 +71,15 @@ h1{font-family:MovingDisplay,NotoSC,sans-serif;color:#fff4e2;font-weight:400;fon
 .turn-button.turn-fired,.turn-button.turn-fired:disabled{transform:translateY(4px);box-shadow:0 1px 0 #a8815d,0 0 0 3px rgba(239,163,109,.34);background:#fff0d5;opacity:1}
 .turn-button.turn-fired .turn-symbol{animation:turn-symbol-pop .45s cubic-bezier(.2,.8,.2,1)}
 .indicator-arrow.arrow-fired{animation:gravity-arrow-pop .5s cubic-bezier(.15,.75,.2,1)}
-.stage-frame.gravity-pulse::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(var(--pulse-angle),transparent 34%,rgba(255,208,143,.24) 50%,transparent 66%);animation:gravity-wash .52s ease-out both}
 .stage-frame.celebrating{animation:stage-celebrate 1.18s ease-out both}
 .result:not([hidden]) .result-card{animation:result-enter .45s cubic-bezier(.2,.82,.22,1) both}
 .result:not([hidden]) .result-stamp{animation:stamp-pop .52s .15s cubic-bezier(.18,1.6,.35,1) both}
 @keyframes turn-symbol-pop{0%{transform:rotate(-22deg) scale(.7)}45%{transform:rotate(9deg) scale(1.24)}100%{transform:rotate(0) scale(1)}}
 @keyframes gravity-arrow-pop{0%{transform:scale(.55);opacity:.5}52%{transform:scale(1.5);filter:drop-shadow(0 0 7px #ffc894)}100%{transform:scale(1);opacity:1}}
-@keyframes gravity-wash{0%{opacity:0;transform:translateX(-18%)}30%{opacity:1}100%{opacity:0;transform:translateX(18%)}}
 @keyframes stage-celebrate{0%,100%{box-shadow:0 1px 0 #e2bd8c,inset 0 0 0 1px #cda77a,0 33px 55px rgba(3,16,18,.46)}45%{box-shadow:0 1px 0 #ffe8b7,inset 0 0 0 3px #ffe6a8,0 0 45px rgba(255,205,137,.65),0 33px 55px rgba(3,16,18,.46)}}
 @keyframes result-enter{0%{opacity:0;transform:translateY(24px) scale(.94)}100%{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes stamp-pop{0%{transform:rotate(-18deg) scale(.3)}70%{transform:rotate(3deg) scale(1.17)}100%{transform:rotate(-8deg) scale(1)}}
-@media(prefers-reduced-motion:reduce){.turn-button.turn-fired,.turn-button.turn-fired:disabled{box-shadow:0 1px 0 #a8815d,0 0 0 3px rgba(239,163,109,.5)}.stage-frame.gravity-pulse::before{animation:none;opacity:.55}.stage-frame.celebrating{animation:none;box-shadow:0 0 0 3px #ffe6a8,0 0 35px rgba(255,205,137,.4)}}
+@media(prefers-reduced-motion:reduce){.turn-button.turn-fired,.turn-button.turn-fired:disabled{box-shadow:0 1px 0 #a8815d,0 0 0 3px rgba(239,163,109,.5)}.stage-frame.celebrating{animation:none;box-shadow:0 0 0 3px #ffe6a8,0 0 35px rgba(255,205,137,.4)}}
 
 /* The room stays upright. Only the simulated gravity vector changes. */
 .stage-frame{flex:none;aspect-ratio:1000/680}
@@ -184,3 +182,14 @@ body{background:linear-gradient(180deg,#284353 0%,#192f3f 52%,#112633 100%)}
 @media(max-width:700px){.turn-controls{gap:9px}.turn-button{width:calc(50% - 5px)}.level-choices{grid-template-columns:repeat(3,minmax(0,1fr))}.cat-dialogue{gap:8px}.cat-avatar{width:65px;height:65px;border-width:3px}.cat-speech{padding:8px 11px;border-width:3px}.cat-speech p{font-size:12px;min-height:2.8em;margin:4px 0 6px}.cat-dialogue-foot button{min-height:32px;font-size:11px;padding:0 8px}.transition-cat{width:73px;height:73px}}
 @media(max-width:390px){.turn-button{width:calc(50% - 5px);font-size:12px}.level-choices{grid-template-columns:repeat(2,minmax(0,1fr))}.cat-avatar{width:56px;height:56px}.cat-speech p{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.cat-avatar,.transition-cat,.transition-track span{animation:none}.transition-track span{width:100%}}
+
+/* A calm, legible heading fits the choice dialog better than the display face. */
+.game-dialog h2{font-family:NotoSC,"Microsoft YaHei",sans-serif;font-size:32px;font-weight:800;letter-spacing:-.035em;line-height:1.28;text-wrap:balance}
+@media(max-width:500px){.game-dialog h2{font-size:27px}}
+
+.cat-speech p{position:relative}
+.cat-speech p::before{content:attr(data-full-text);visibility:hidden}
+.cat-speech p #catIntroTyped{position:absolute;inset:0}
+.cat-speech p.typing #catIntroTyped::after{content:"▌";display:inline;color:#b5724c;animation:dialogue-cursor .7s steps(2,end) infinite}
+@keyframes dialogue-cursor{50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.cat-speech p.typing #catIntroTyped::after{animation:none}}
