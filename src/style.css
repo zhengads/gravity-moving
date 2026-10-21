@@ -44,13 +44,13 @@ html{background:#112b2f}
 body{font-family:NotoSC,"Microsoft YaHei",sans-serif;color:var(--ink);background:radial-gradient(ellipse at 50% 29%,#285258 0%,#15363a 52%,#0d2428 100%)}
 .app-shell{width:min(1180px,calc(100% - 48px))}
 .topbar{border-color:rgba(238,226,203,.16)}
-.brand-name{font-family:MovingDisplay,NotoSC,sans-serif;font-size:27px;font-weight:400;line-height:1.1;letter-spacing:.02em;color:#fff4dd}
+.brand-name{font-family:NotoSC,"Microsoft YaHei",sans-serif;font-size:27px;font-weight:400;line-height:1.1;letter-spacing:.02em;color:#fff4dd}
 .brand-mark{width:32px;height:29px;transform:rotate(-7deg);background:#d6a77b;border:2px solid #f2d5ae;border-radius:4px;box-shadow:3px 4px 0 rgba(0,0,0,.22)}
 .brand-mark span{display:none}.brand-mark::before{content:"";position:absolute;left:3px;top:-8px;width:22px;height:13px;transform:skewX(-28deg);background:#f1cb9d;border:2px solid #f2d5ae;border-radius:3px 4px 1px 1px}.brand-mark::after{content:"↗";position:absolute;color:#5e4a3e;font-size:17px;line-height:1;left:7px;top:5px;font-weight:800}
 .series-label{color:#8eaaa8;font-size:12px;letter-spacing:0}
 .icon-button{background:rgba(249,240,220,.08);border:1px solid rgba(239,225,199,.34);color:#ebd6b7;border-radius:10px}.icon-button:hover{background:rgba(249,240,220,.18)}
 .game-heading{margin:24px auto 16px}.eyeline{color:#f0b385;font-size:12px;letter-spacing:.02em;font-weight:700;margin-bottom:6px}.eyeline-rule{background:#9a8975}
-h1{font-family:MovingDisplay,NotoSC,sans-serif;color:#fff4e2;font-weight:400;font-size:clamp(32px,3.4vw,46px);letter-spacing:.005em;line-height:1.16}
+h1{font-family:NotoSC,"Microsoft YaHei",sans-serif;color:#fff4e2;font-weight:400;font-size:clamp(32px,3.4vw,46px);letter-spacing:.005em;line-height:1.16}
 #roomHint{font-size:14px;line-height:1.65;color:#bfd0ca;margin-top:8px}
 .objective-title{color:#c2d2cb;font-size:12px}.objective-item{background:rgba(247,235,208,.12);border:1px solid rgba(251,238,212,.34);color:#f7e8cf;border-radius:8px;font-size:12px;padding:7px 10px}.objective-item.done{background:rgba(128,178,143,.22);color:#d7ead8;border-color:#80b28e}.objective-item .dot{color:#efaf78}
 .stage-frame{border:3px solid #8b7255;border-bottom-width:5px;border-radius:12px;background:#142b2b;box-shadow:0 1px 0 #e2bd8c,inset 0 0 0 1px #cda77a,0 33px 55px rgba(3,16,18,.46);overflow:hidden}
@@ -62,8 +62,8 @@ h1{font-family:MovingDisplay,NotoSC,sans-serif;color:#fff4e2;font-weight:400;fon
 .indicator-caption{color:#a8bcb7;font-size:11px}.indicator-arrow{color:#efa36d;font-size:27px;height:29px;line-height:29px}.indicator-value{color:#e9ddc5;font-size:11px}
 .text-button{color:#d0dfd7;font-size:12px}.text-button:hover:not(:disabled){color:#ffd7ad}.text-button kbd{background:rgba(255,255,255,.09);border-color:#81938b;color:#d3d8cb}.rail-dot{background:#839d98}.rail-tip{color:#9db6ad;font-size:11px}
 .footer{border-color:rgba(239,224,196,.15);color:#8ca8a3;font-size:11px}
-.result{background:rgba(8,26,29,.58)}.result-card{background:#f4ead7;border:3px solid #f9e9cb;box-shadow:0 25px 55px rgba(5,20,20,.42);color:#294447}.result h2{font-family:MovingDisplay,NotoSC,sans-serif;font-weight:400;font-size:37px}.result p#resultText{color:#6a7d74;font-size:13px}.result-kicker{color:#588b67}.button-primary{background:#b76f48;border-color:#a25d3d;box-shadow:0 3px 0 #88452b}.button-primary:hover{background:#c88156}.button-secondary{background:#e4d4bb;color:#36535a;border-color:#c9b899}
-.help-dialog{background:#f4ead7;color:#284346;border:2px solid #e4c99d}.help-dialog h2{font-family:MovingDisplay,NotoSC,sans-serif;font-weight:400;font-size:32px}.help-dialog p,.help-dialog ul{color:#526b68}.dialog-icon{color:#b46e43}.help-dialog li strong{color:#a4643d}
+.result{background:rgba(8,26,29,.58)}.result-card{background:#f4ead7;border:3px solid #f9e9cb;box-shadow:0 25px 55px rgba(5,20,20,.42);color:#294447}.result h2{font-family:NotoSC,"Microsoft YaHei",sans-serif;font-weight:400;font-size:37px}.result p#resultText{color:#6a7d74;font-size:13px}.result-kicker{color:#588b67}.button-primary{background:#b76f48;border-color:#a25d3d;box-shadow:0 3px 0 #88452b}.button-primary:hover{background:#c88156}.button-secondary{background:#e4d4bb;color:#36535a;border-color:#c9b899}
+.help-dialog{background:#f4ead7;color:#284346;border:2px solid #e4c99d}.help-dialog h2{font-family:NotoSC,"Microsoft YaHei",sans-serif;font-weight:400;font-size:32px}.help-dialog p,.help-dialog ul{color:#526b68}.dialog-icon{color:#b46e43}.help-dialog li strong{color:#a4643d}
 @media(max-width:700px){.app-shell{width:calc(100% - 20px)}.topbar{height:61px}.brand-name{font-size:23px}.game-heading{margin:15px auto 13px}.eyeline{font-size:11px}h1{font-size:33px}#roomHint{font-size:12px;line-height:1.5}.objective-panel{margin-top:12px}.objective-item{font-size:11px}.stage-frame{border-width:2px;border-bottom-width:4px;border-radius:8px}.turn-controls{gap:9px}.turn-button{width:calc((100% - 104px)/2);height:58px;font-size:12px}.gravity-indicator{width:86px}.control-panel{margin-top:14px}.footer{margin-top:12px}}
 @media(max-width:390px){.app-shell{width:calc(100% - 14px)}h1{font-size:29px}.game-heading{margin:12px auto 10px}.objective-panel{margin-top:8px}.objective-item{padding:5px 7px}.turn-button{width:calc((100% - 92px)/2)}.gravity-indicator{width:74px}}
 
@@ -129,7 +129,7 @@ body{background:linear-gradient(180deg,#284353 0%,#192f3f 52%,#112633 100%)}
 .game-dialog{width:min(530px,calc(100% - 24px));max-height:calc(100dvh - 26px);overflow:auto;padding:28px;border:2px solid #e3c596;border-radius:19px;background:#f4ead7;color:#294347;box-shadow:0 30px 80px rgba(4,18,20,.5),inset 0 0 0 4px rgba(255,250,236,.65)}
 .game-dialog::backdrop{background:rgba(5,25,27,.72);backdrop-filter:blur(5px)}
 .dialog-overline{color:#ad6b46;font-size:11px;font-weight:800;letter-spacing:.06em}.dialog-overline span{margin:0 5px;color:#b59d7f}
-.game-dialog h2{margin:10px 0 8px;font-family:MovingDisplay,NotoSC,sans-serif;font-size:38px;font-weight:400;line-height:1.16;color:#254448}
+.game-dialog h2{margin:10px 0 8px;font-family:NotoSC,"Microsoft YaHei",sans-serif;font-size:38px;font-weight:400;line-height:1.16;color:#254448}
 .dialog-lead{margin:0 0 22px;color:#627977;font-size:13px;line-height:1.7}
 .start-choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .choice-card{min-height:207px;display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:17px;border:1.5px solid #d8bd97;border-radius:12px;background:#fff8e9;color:#28474a;box-shadow:0 4px 0 #d8bd97;transition:transform .15s,box-shadow .15s,background .15s}
@@ -171,7 +171,7 @@ body{background:linear-gradient(180deg,#284353 0%,#192f3f 52%,#112633 100%)}
 .transition-card{width:min(440px,100%);text-align:center;color:#ffedcd}
 .transition-cat{width:100px;height:100px;margin:0 auto 14px;border:4px solid #e8c697;background:#a8c8b6;box-shadow:5px 5px 0 #0f2d37;image-rendering:pixelated;animation:cat-travel .7s steps(4,end) infinite alternate}
 .transition-kicker{display:block;color:#f2bf87}
-.transition-card strong{display:block;margin:5px 0;font-family:MovingDisplay,NotoSC,sans-serif;font-size:clamp(28px,5vw,43px);font-weight:400}
+.transition-card strong{display:block;margin:5px 0;font-family:NotoSC,"Microsoft YaHei",sans-serif;font-size:clamp(28px,5vw,43px);font-weight:400}
 .transition-card p{min-height:2.6em;color:#cedbd0;font-size:clamp(11px,1.7vw,14px);line-height:1.5}
 .transition-track{height:10px;border:2px solid #e8c697;margin:15px auto 0;background:#264553;max-width:290px}
 .transition-track span{display:block;height:100%;width:0;background:#efb474;animation:pixel-load 1.6s steps(10,end) both}
@@ -193,3 +193,60 @@ body{background:linear-gradient(180deg,#284353 0%,#192f3f 52%,#112633 100%)}
 .cat-speech p.typing #catIntroTyped::after{content:"▌";display:inline;color:#b5724c;animation:dialogue-cursor .7s steps(2,end) infinite}
 @keyframes dialogue-cursor{50%{opacity:0}}
 @media(prefers-reduced-motion:reduce){.cat-speech p.typing #catIntroTyped::after{animation:none}}
+
+/* One crisp Chinese type family across gameplay and overlays. Pixel art carries the retro character. */
+.brand-name,h1,.result h2,.help-dialog h2,.transition-card strong{font-family:NotoSC,"Microsoft YaHei",sans-serif;font-weight:700;letter-spacing:-.025em}
+.brand-name{font-size:25px;letter-spacing:.015em}
+h1{font-size:clamp(27px,2.8vw,35px);line-height:1.3}
+.result h2{font-size:30px;line-height:1.3}
+.help-dialog h2{font-size:27px;line-height:1.35}
+.transition-card strong{font-size:clamp(26px,4vw,35px);line-height:1.35}
+.game-dialog h2{letter-spacing:-.025em}
+.level-option small,.choice-card small,.mode-option small{font-size:11px;line-height:1.4}
+@media(max-width:700px){.brand-name{font-size:22px}h1{font-size:29px}.result h2{font-size:25px}.cat-speech p{font-size:13px;line-height:1.65}}
+@media(max-width:390px){h1{font-size:26px}.level-option small{font-size:10px}}
+
+.orientation-tip{display:none}
+@media(max-width:700px) and (orientation:portrait){
+  .orientation-tip{display:flex;align-items:center;gap:11px;margin:-8px 0 17px;padding:10px 12px;background:#e7eddf;border:1px solid #a7bea9;color:#355b52}
+  .orientation-tip-icon{display:grid;place-items:center;width:34px;height:34px;flex:none;color:#568475;font-size:30px;line-height:1;transform:rotate(90deg)}
+  .orientation-tip strong,.orientation-tip small{display:block;line-height:1.45}
+  .orientation-tip strong{font-size:12px}.orientation-tip small{font-size:10px;color:#687f71}
+}
+@media(orientation:landscape) and (max-height:600px) and (max-width:1000px){
+  html,body{height:100%;overflow:hidden}
+  .app-shell{position:relative;width:100%;height:100dvh;overflow:hidden}
+  .stage-section{position:absolute;inset:0;display:block}
+  .stage-frame{width:100%;height:100%;aspect-ratio:auto;border:0;box-shadow:none;background:repeating-linear-gradient(90deg,#213b45 0,#213b45 8px,#294854 8px,#294854 10px)}
+  .stage-frame::after{border-radius:0;box-shadow:inset 0 0 0 2px rgba(255,228,185,.13)}
+  .stage-frame canvas{height:100%;width:auto;max-width:100%;margin-inline:auto}
+  .topbar{position:absolute;z-index:5;right:8px;top:7px;width:auto;height:auto;border:0}
+  .brand,.series-label{display:none}
+  .top-actions{gap:6px}.top-actions .icon-button{width:35px;height:35px}
+  .game-heading{position:absolute;z-index:3;top:7px;left:8px;width:auto;max-width:calc(100% - 100px);margin:0;padding:5px 8px 6px;display:block;background:rgba(22,43,53,.86);border:1px solid rgba(246,217,171,.45);pointer-events:none}
+  .eyeline{font-size:9px;margin:0 0 1px;gap:6px}.eyeline-rule{width:12px}
+  .game-heading h1{font-size:15px;line-height:1.25;font-weight:700}
+  #roomHint{display:none}
+  .objective-panel{margin-top:3px;padding:0;gap:6px}.objective-title{font-size:9px;white-space:nowrap}.objective-list{gap:3px;flex-wrap:wrap}
+  .objective-item{min-width:0;padding:2px 4px;font-size:9px;gap:3px}.objective-item .dot{font-size:11px}
+  .control-panel{position:absolute;z-index:3;inset:auto 0 0;width:100%;height:48px;margin:0;pointer-events:none}
+  .turn-controls{display:contents}
+  .turn-button{position:absolute;bottom:7px;width:92px;height:35px;padding:0 3px;gap:2px;font-size:10px;pointer-events:auto;background:rgba(233,212,180,.94)}
+  .turn-button:first-child{left:7px}.turn-button:last-child{right:7px}.turn-symbol{font-size:18px}
+  .control-rail{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);min-height:33px;margin:0;padding:0 6px;gap:5px;background:rgba(22,43,53,.9);pointer-events:auto}
+  .text-button{font-size:9px;padding:5px 2px;white-space:nowrap}.text-button kbd{font-size:8px;padding:1px 2px}.rail-tip{display:none}
+  .stage-note{bottom:48px}
+  .game-dialog{width:min(650px,calc(100% - 20px));max-height:calc(100dvh - 12px);padding:14px 18px}
+  .game-dialog h2{font-size:23px;margin:4px 0}.dialog-lead{font-size:11px;margin-bottom:10px}
+  .start-choices{gap:9px}.choice-card{min-height:121px;padding:9px}.choice-art{height:34px;margin:0}.phone-art{transform:scale(.58);transform-origin:left top}.arrow-art{font-size:24px}
+  .choice-card strong{font-size:14px}.choice-card small{font-size:10px}.choice-action{padding-top:3px}.start-footnote{margin-top:9px;font-size:9px}
+  .cat-avatar{width:60px;height:60px}.cat-speech{padding:7px 10px}.cat-speech p{font-size:11px;min-height:2.4em;margin:3px 0}.cat-dialogue-foot button{min-height:28px}
+  .result-card{padding:11px 15px}.result-stamp{width:32px;height:32px;font-size:20px;margin-bottom:3px}.result h2{font-size:22px}.result-actions{margin-top:7px}
+}
+@media(orientation:landscape) and (max-height:600px) and (min-width:760px) and (max-width:1000px){
+  .game-heading{width:calc((100vw - 100dvh * 1.470588) / 2 - 16px);max-width:145px;top:49px;padding:8px}
+  .eyeline{display:block;line-height:1.35}.eyeline-rule{display:none}.eyeline #stageLabel{display:none}
+  .game-heading h1{font-size:13px;line-height:1.4;margin:3px 0 7px}
+  .objective-panel{display:block}.objective-title{display:block;margin-bottom:3px}.objective-list{display:flex;flex-direction:column;align-items:stretch;gap:3px}
+  .objective-item{justify-content:flex-start;font-size:9px;padding:2px 4px}
+}

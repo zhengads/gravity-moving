@@ -364,6 +364,15 @@ function createPixelArt(ctx, state) {
           worldPixel(x + Math.floor(w / 2), yy + 5, 2, 4, '#e9dcaa');
         }
         worldPixel(x + 3, y + 5, 2, h - 8, '#718b81');
+      } else if (b.kind === 'hangingCabinet') {
+        worldPixel(x, y, w, h, '#526c68');
+        worldPixel(x + 2, y + 2, w - 4, h - 5, '#d2c39d');
+        worldPixel(x + 4, y + 4, w - 8, h - 10, '#9fb7a4');
+        worldPixel(x + Math.floor(w / 2) - 1, y + 4, 2, h - 10, '#526c68');
+        worldPixel(x + Math.floor(w / 2) - 5, y + Math.floor(h / 2), 2, 5, '#e9d6aa');
+        worldPixel(x + Math.floor(w / 2) + 3, y + Math.floor(h / 2), 2, 5, '#e9d6aa');
+        worldPixel(x - 2, y + h - 4, w + 4, 4, '#f0ddba');
+        worldPixel(x + 1, y + h - 1, w - 2, 2, '#526c68');
       } else if (b.kind === 'workbench') {
         worldPixel(x - 2, y, w + 4, 6, '#5a6874');
         worldPixel(x - 1, y + 1, w + 2, 3, '#d9ad7b');
@@ -378,6 +387,16 @@ function createPixelArt(ctx, state) {
         worldPixel(x, y, w, h, '#4c4b5c');
         worldPixel(x + 1, y + 1, w - 2, 2, '#ecc08b');
         for (let i = x + 4; i < x + w - 2; i += 9) worldPixel(i, y + 3, 1, 2, '#886777');
+      } else if (b.kind === 'toolRack') {
+        worldPixel(x, y, w, h, '#405563');
+        worldPixel(x + 1, y + 1, w - 2, h - 2, '#c49d77');
+        worldPixel(x + 3, y + 3, w - 6, h - 6, '#6f8589');
+        for (let yy = y + 10; yy < y + h - 10; yy += 19) {
+          worldPixel(x + 2, yy, w - 4, 3, '#e7c28e');
+          worldPixel(x + 3, yy + 3, 2, 8, '#dfd9ba');
+          worldPixel(x + w - 5, yy + 3, 2, 7, '#e8ab7d');
+        }
+        worldPixel(x - 1, y + h - 2, w + 2, 3, '#e3bd8d');
       } else if (b.kind === 'gate') {
         const progress = state.gateOpen ? Math.min(1, (time - state.gateOpenedAt) / 480) : 0;
         if (progress >= 1) continue;
@@ -394,6 +413,52 @@ function createPixelArt(ctx, state) {
       worldPixel(sx, sy, 22, 6, state.gateOpen ? '#6dae91' : '#e49665');
       worldPixel(sx + 2, sy + 1, 18, 3, state.gateOpen ? '#c5e3a3' : '#f4c483');
       if (state.gateOpen) worldPixel(sx + 8, sy + 6, 6, 3, '#9cb98f');
+    }
+  }
+
+  function drawMechanisms(time) {
+    if (state.lampBody) {
+      const px = state.lampBody.position.x / P, py = state.lampBody.position.y / P;
+      for (let i = 0; i <= 18; i++) {
+        const t = i / 18;
+        worldPixel(Math.round(170 + (px - 170) * t), Math.round(24 + (py - 24) * t), 1, 2, '#526b6e');
+      }
+      worldPixel(167, 22, 6, 3, '#8d6e60');
+      worldPixel(Math.round(px) - 7, Math.round(py) - 5, 14, 9, '#304d57');
+      worldPixel(Math.round(px) - 6, Math.round(py) - 4, 12, 6, '#e2a765');
+      worldPixel(Math.round(px) - 4, Math.round(py) - 2, 8, 3, '#f4d595');
+      worldPixel(Math.round(px) - 5, Math.round(py) + 3, 10, 1, '#4d6265');
+    }
+    const spring = state.levels[state.level].spring;
+    if (spring) {
+      const x = Math.round((spring.x - spring.w / 2) / P), y = Math.round((spring.y - spring.h / 2) / P);
+      const w = Math.round(spring.w / P), active = state.springFlashUntil > time;
+      worldPixel(x - 1, y + 3, w + 2, 3, '#744f52');
+      worldPixel(x, y + (active ? 2 : 0), w, active ? 2 : 4, '#d77a50');
+      worldPixel(x + 1, y + (active ? 2 : 0), w - 2, 1, '#f3c77f');
+      for (let i = 3; i < w - 2; i += 5) worldPixel(x + i, y + (active ? 3 : 2), 2, 1, '#fff0b6');
+      if (active) for (let i = 0; i < 4; i++) worldPixel(x + i * 5 + 1, y - 4 - i % 2, 2, 2, '#ffe3a1');
+    }
+    const belt = state.levels[state.level].belt;
+    if (belt) {
+      const x = Math.round((belt.x - belt.w / 2) / P), y = Math.round((belt.y - belt.h / 2) / P), w = Math.round(belt.w / P);
+      const right = state.beltDirection > 0, moving = state.beltFlashUntil > time;
+      worldPixel(x - 1, y + 1, w + 2, 6, '#394b57');
+      worldPixel(x, y, w, 4, right ? '#5d9f96' : '#986e84');
+      worldPixel(x + 1, y + 1, w - 2, 1, right ? '#b6dbb2' : '#d9a6a4');
+      const shift = Math.floor(time / 125) % 7;
+      for (let i = x + 3; i < x + w - 3; i += 7) {
+        const sx = x + 2 + ((i - x + (right ? shift : 7 - shift)) % (w - 4));
+        if (sx + 3 >= x + w) continue;
+        worldPixel(sx + (right ? 0 : 2), y + 2, 1, 1, '#f7e6c2');
+        worldPixel(sx + 1, y + 1, 1, 3, '#f7e6c2');
+      }
+      worldPixel(x - 2, y + 4, 3, 3, '#6b5960');
+      worldPixel(x + w - 1, y + 4, 3, 3, '#6b5960');
+      worldPixel(x + 3, y - 5, w - 6, 2, '#344c58');
+      worldPixel(x + 4, y - 5, Math.max(1, Math.floor((w - 8) * state.beltProgress)), 1, right ? '#b6dbb2' : '#e6baac');
+      worldPixel(x - 4, y - 2, 5, 7, '#50636c');
+      worldPixel(x - 3, y - 1, 3, 4, moving ? '#ffe49f' : right ? '#87c1ab' : '#d69a83');
     }
   }
 
@@ -479,5 +544,5 @@ function createPixelArt(ctx, state) {
     c.drawImage(screen, 198, 40, 32, 32, 0, 0, 32, 32);
     return portrait.toDataURL('image/png');
   }
-  return { drawBackdrop, drawBlocks, drawBox, drawContactShadow, drawItem, drawBoxFeedback, catPortrait };
+  return { drawBackdrop, drawBlocks, drawMechanisms, drawBox, drawContactShadow, drawItem, drawBoxFeedback, catPortrait };
 }

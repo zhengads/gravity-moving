@@ -6,8 +6,7 @@ const root = path.dirname(fileURLToPath(import.meta.url));
 const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8');
 const data = (relative, mime) => `data:${mime};base64,${fs.readFileSync(path.join(root, relative)).toString('base64')}`;
 const template = read('src/template.html');
-const fontCss = `@font-face{font-family:MovingDisplay;src:url('${data('src/fonts/SmileySans.woff2','font/woff2')}') format('woff2');font-display:block;font-weight:400 900}
-@font-face{font-family:NotoSC;src:url('${data('src/fonts/NotoSansSC.woff2','font/woff2')}') format('woff2');font-display:block;font-weight:100 900}`;
+const fontCss = `@font-face{font-family:NotoSC;src:url('${data('src/fonts/NotoSansSC.woff2','font/woff2')}') format('woff2');font-display:block;font-weight:100 900}`;
 const htmlBody = template
   .replace('/* FONT_INLINE */', fontCss)
   .replace('/* STYLE_INLINE */', read('src/style.css'))

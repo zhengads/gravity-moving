@@ -18,13 +18,13 @@
       blocks: [], tip: '倾斜手机或点右侧按钮，看看小球会去哪里。',
     },
     {
-      room: '书房', title: '书架挡住了路。', hint: '想办法让物品先经过书架上方。', color: '#eaf1e9', floor: '#ab947d',
+      room: '书房', title: '等吊灯摆过去。', hint: '绕过书架后，留意会摆动的阅读灯。', color: '#eaf1e9', floor: '#ab947d',
       items: [
         { id: 'ball', kind: 'ball', label: '网球', x: 230, y: 574, radius: 30, target: true },
         { id: 'book', kind: 'book', label: '笔记本', x: 296, y: 569, w: 60, h: 70, target: true },
       ],
       blocks: [{ x: 477, y: 388, w: 148, h: 428, kind: 'shelf' }],
-      tip: '先往上，再绕过书架。',
+      tip: '先越过书架，再抓住吊灯摆开的空隙。',
     },
     {
       room: '客厅', title: '客厅里有一道门。', hint: '把木块送到高处的橙色开关，打开收纳通道。', color: '#f0e9e5', floor: '#b48b71',
@@ -42,45 +42,42 @@
       tip: '只有木块能启动高处的开关。',
     },
     {
-      room: '厨房', title: '再收好厨房的小物件。', hint: '料理台改变了路线；让木块先碰到高处开关。', color: '#e7e8d2', floor: '#b89269',
+      room: '厨房', title: '借弹簧穿过橱柜。', hint: '弹簧会把物件弹起；瞄准上下橱柜间的空隙。', color: '#e7e8d2', floor: '#b89269',
       items: [
         { id: 'ball', kind: 'ball', label: '网球', x: 155, y: 570, radius: 30, target: true },
         { id: 'book', kind: 'book', label: '食谱', x: 250, y: 569, w: 60, h: 70, target: true },
-        { id: 'mug', kind: 'mug', label: '马克杯', x: 350, y: 571, w: 60, h: 66, target: true },
-        { id: 'block', kind: 'block', label: '木块', x: 630, y: 394, w: 65, h: 65, target: false },
+        { id: 'mug', kind: 'mug', label: '马克杯', x: 315, y: 571, w: 60, h: 66, target: true },
       ],
       blocks: [
-        { x: 478, y: 450, w: 148, h: 304, kind: 'counter' },
+        { x: 478, y: 517, w: 148, h: 174, kind: 'counter' },
+        { x: 478, y: 188, w: 148, h: 224, kind: 'hangingCabinet' },
         { x: 697, y: 439, w: 160, h: 24, kind: 'ledge' },
-        { x: 775, y: 437, w: 32, h: 334, kind: 'gate' },
       ],
-      switch: { item: 'block', minX: 651, maxX: 731, maxY: 142, x: 692, y: 88 },
-      tip: '杯子比较重；先观察它会停在哪里。',
+      spring: { x: 365, y: 590, w: 68, h: 24 },
+      tip: '先观察弹跳轨迹，再调重力对准橱柜间的空隙。',
     },
     {
-      room: '工作间', title: '最后一间，慢慢来。', hint: '让木块打开通道，再把四件物品都送进纸箱。', color: '#dce0e4', floor: '#ad8c78',
+      room: '工作间', title: '等传送带转向。', hint: '传送带每隔几秒自行换向；看准它向右的时机。', color: '#dce0e4', floor: '#ad8c78',
       items: [
         { id: 'ball', kind: 'ball', label: '网球', x: 135, y: 570, radius: 30, target: true },
         { id: 'book', kind: 'book', label: '笔记本', x: 218, y: 569, w: 60, h: 70, target: true },
         { id: 'clock', kind: 'clock', label: '闹钟', x: 310, y: 571, w: 64, h: 66, target: true },
         { id: 'mug', kind: 'mug', label: '马克杯', x: 385, y: 571, w: 60, h: 66, target: true },
-        { id: 'block', kind: 'block', label: '木块', x: 630, y: 394, w: 65, h: 65, target: false },
       ],
       blocks: [
         { x: 490, y: 470, w: 132, h: 264, kind: 'workbench' },
-        { x: 697, y: 439, w: 160, h: 24, kind: 'ledge' },
-        { x: 775, y: 437, w: 32, h: 334, kind: 'gate' },
+        { x: 650, y: 298, w: 36, h: 444, kind: 'toolRack' },
       ],
-      switch: { item: 'block', minX: 651, maxX: 731, maxY: 142, x: 692, y: 88 },
-      tip: '想一想：先开门，还是先收纳？',
+      belt: { x: 628, y: 591, w: 154, h: 24, period: 3200 },
+      tip: '箭头和刻度会提示下一次换向；只需控制物件何时落下。',
     },
   ];
   const TRANSITION_TIPS = [
     '搬家小贴士：先轻轻推，留出转身的空间。',
     '游戏提示：利用天花板，也能绕开家具。',
     '小猫说：看见橙色开关，就找找能碰它的木块。',
-    '生活小贴士：易碎物品单独包装，杯子别和书挤在一起。',
-    '游戏提示：每件物品的重量与弹性都不同，耐心观察。',
+    '游戏提示：厨房的弹簧垫能改变物件的运动轨迹。',
+    '小猫说：传送带会自己换向，等它朝纸箱走再落下。',
   ];
 
   const $ = (id) => document.getElementById(id);
@@ -109,6 +106,7 @@
     time: 0, accumulator: 0, settleSince: 0, turnStarted: 0, catWake: 0, lastCollision: 0, lastObjectCollision: 0,
     noteTimer: 0, enteredAt: performance.now(), frame: 0, gateOpen: false, gateOpenedAt: 0,
     captures: [], winAt: 0, turnFeedbackUntil: 0, celebrateUntil: 0,
+    lampBody: null, springCooldown: new Map(), springFlashUntil: 0, beltDirection: -1, beltFlashUntil: 0, beltProgress: 0,
     targetGravity: { x: 0, y: 1 }, displayedGravity: { x: 0, y: 1 },
     motionMode: 'off', motionKind: null, motionLastAt: 0, motionStartedAt: 0, started: false,
     introStep: -1, introTypingTimer: 0, transitionTimer: 0, transitioning: false, levels: LEVELS,
@@ -136,7 +134,7 @@
     state.displayedGravity.x = x;
     state.displayedGravity.y = y;
     if (time - (state.lastAriaAt || 0) > 500) {
-      canvas.setAttribute('aria-label', `${LEVELS[state.level].room}游戏画面，重力${directionName(x, y)}，已收纳${state.collected.size}件物品`);
+      canvas.setAttribute('aria-label', `${LEVELS[state.level].room}游戏画面，重力${directionName(x, y)}，已收纳${state.collected.size}件物品${state.level === 4 ? `；传送带${state.beltDirection > 0 ? '向右' : '向左'}` : ''}`);
       state.lastAriaAt = time;
     }
   }
@@ -156,7 +154,7 @@
     elements.modeMotion.setAttribute('aria-pressed', String(motionSelected));
     elements.modeButtons.setAttribute('aria-pressed', String(!motionSelected));
     elements.modeMotion.disabled = state.motionMode === 'waiting';
-    elements.motionStatus.textContent = message || (state.motionMode === 'waiting' ? '正在等待手机传感器…' : motionSelected ? '体感已开启，竖屏倾斜手机即可控制。' : '按钮操作中，可随时改为体感。');
+    elements.motionStatus.textContent = message || (state.motionMode === 'waiting' ? '正在等待手机传感器…' : motionSelected ? '体感已开启，倾斜手机即可控制。' : '按钮操作中，可随时改为体感。');
     if (state.level === 0) {
       elements.roomHint.textContent = motionSelected ? '倾斜手机，让小球滚进纸箱。' : '点右侧按钮，让小球滚进纸箱。';
       elements.railTip.textContent = motionSelected ? '慢慢倾斜手机，观察小球的运动。' : '试试右侧按钮，看看小球会去哪里。';
@@ -236,14 +234,24 @@
     if (!a || !Number.isFinite(a.x) || !Number.isFinite(a.y)) return;
     // The accelerometer reports proper acceleration, opposite to gravity.
     // Device y points toward the top; canvas y points down.
-    acceptMotion(-a.x / 9.81 * 1.45, a.y / 9.81 * 1.45, 'motion');
+    const gravity = screenGravity(-a.x / 9.81 * 1.45, a.y / 9.81 * 1.45);
+    acceptMotion(gravity.x, gravity.y, 'motion');
+  }
+
+  function screenGravity(x, y) {
+    const angle = (((screen.orientation?.angle ?? window.orientation ?? 0) % 360) + 360) % 360;
+    if (angle === 90) return { x: -y, y: x };
+    if (angle === 180) return { x: -x, y: -y };
+    if (angle === 270) return { x: y, y: -x };
+    return { x, y };
   }
 
   function onDeviceOrientation(event) {
     if (!Number.isFinite(event.beta) || !Number.isFinite(event.gamma)) return;
     // Positive beta is upright (down on screen); positive gamma tips right.
-    acceptMotion(Math.sin(event.gamma * Math.PI / 180) * 1.45,
-      Math.sin(event.beta * Math.PI / 180) * 1.45, 'orientation');
+    const gravity = screenGravity(Math.sin(event.gamma * Math.PI / 180) * 1.45,
+      Math.sin(event.beta * Math.PI / 180) * 1.45);
+    acceptMotion(gravity.x, gravity.y, 'orientation');
   }
 
   function makeItem(item) {
@@ -270,6 +278,12 @@
     state.turns = restore?.turns ?? 0;
     state.gateOpen = restore?.gateOpen ?? false;
     state.gateOpenedAt = state.gateOpen ? -1000 : 0;
+    state.lampBody = null;
+    state.springCooldown = new Map();
+    state.springFlashUntil = 0;
+    state.beltDirection = -1;
+    state.beltFlashUntil = 0;
+    state.beltProgress = 0;
     state.captures = [];
     state.winAt = 0;
     state.accumulator = 0;
@@ -295,6 +309,10 @@
       Bodies.rectangle(RIGHT + 19, 340, 38, 560, { isStatic: true, restitution: .75 }),
     ];
     Composite.add(state.engine.world, walls);
+    if (index === 1) {
+      state.lampBody = Bodies.circle(680, 285, 32, { isStatic: true, restitution: .76, friction: .04, label: 'reading-lamp' });
+      Composite.add(state.engine.world, state.lampBody);
+    }
     for (const block of LEVELS[index].blocks) {
       const body = Bodies.rectangle(block.x, block.y, block.w, block.h, { isStatic: true, chamfer: { radius: block.kind === 'shelf' ? 5 : 4 } });
       state.blocks.push({ ...block, body });
@@ -394,7 +412,7 @@
       button.classList.toggle('selected', selected);
       button.setAttribute('aria-current', selected ? 'true' : 'false');
     }
-    canvas.setAttribute('aria-label', `${LEVELS[state.level].room}游戏画面，重力${directionName(state.displayedGravity.x, state.displayedGravity.y)}，已收纳${state.collected.size}件物品`);
+    canvas.setAttribute('aria-label', `${LEVELS[state.level].room}游戏画面，重力${directionName(state.displayedGravity.x, state.displayedGravity.y)}，已收纳${state.collected.size}件物品${state.level === 4 ? `；传送带${state.beltDirection > 0 ? '向右' : '向左'}` : ''}`);
   }
   function note(message) {
     clearTimeout(state.noteTimer);
@@ -444,6 +462,48 @@
       elements.roomHint.textContent = '门开了！现在把待收纳的物品送进箱子。';
       note('木块碰到了开关，门打开了');
       sound('gate');
+    }
+  }
+  function moveLamp(time) {
+    if (!state.lampBody) return;
+    const offset = Math.sin((time - state.enteredAt) * .00155) * 75;
+    Body.setPosition(state.lampBody, { x: 680 + offset, y: 94 + Math.sqrt(191 * 191 - offset * offset) });
+  }
+  function applyRoomMechanics(time) {
+    const spring = LEVELS[state.level].spring;
+    if (spring) {
+      for (const [id, body] of state.bodies) {
+        if (time - (state.springCooldown.get(id) ?? -1000) < 780) continue;
+        if (body.position.x < spring.x - spring.w / 2 || body.position.x > spring.x + spring.w / 2) continue;
+        if (body.bounds.max.y < spring.y - spring.h / 2 || body.position.y > spring.y || body.velocity.y < -1) continue;
+        const lift = body.itemKind === 'book' ? 22 : body.itemKind === 'mug' ? 20 : 19;
+        Body.setVelocity(body, { x: Math.max(9, body.velocity.x), y: -lift });
+        Sleeping.set(body, false);
+        state.springCooldown.set(id, time);
+        state.springFlashUntil = time + 260;
+        sound('spring');
+      }
+    }
+    const belt = LEVELS[state.level].belt;
+    if (belt) {
+      for (const body of state.bodies.values()) {
+        if (body.position.x < belt.x - belt.w / 2 || body.position.x > belt.x + belt.w / 2) continue;
+        if (body.bounds.max.y < belt.y - belt.h / 2 || body.position.y < belt.y - 76) continue;
+        Body.setVelocity(body, { x: Math.max(-11, Math.min(11, body.velocity.x + state.beltDirection * .94)), y: body.velocity.y });
+        Sleeping.set(body, false);
+      }
+    }
+  }
+  function updateBeltCycle(time) {
+    const belt = LEVELS[state.level].belt;
+    if (!belt) return;
+    const elapsed = Math.max(0, time - state.enteredAt);
+    const direction = Math.floor(elapsed / belt.period) % 2 === 0 ? -1 : 1;
+    state.beltProgress = (elapsed % belt.period) / belt.period;
+    if (direction !== state.beltDirection) {
+      state.beltDirection = direction;
+      state.beltFlashUntil = time + 340;
+      if (state.started && !document.hidden && !state.transitioning) sound('belt');
     }
   }
   function win() {
@@ -528,6 +588,12 @@
       } else if (kind === 'gate') {
         tone('square', 260, 190, t, .10, .015);
         tone('sine', 520, 780, t + .11, .2, .025);
+      } else if (kind === 'spring') {
+        tone('square', 290, 520, t, .14, .026);
+        tone('sine', 520, 790, t + .08, .18, .018);
+      } else if (kind === 'belt') {
+        tone('triangle', 245, 370, t, .18, .028);
+        tone('square', 510, 420, t + .1, .08, .009);
       } else if (kind === 'win') {
         [523, 659, 784, 1047].forEach((pitch, index) => {
           tone('sine', pitch, pitch * 1.01, t + index * .15, .44, .03);
@@ -546,6 +612,7 @@
     ctx.clearRect(0, 0, W, H);
     art.drawBackdrop(time);
     art.drawBlocks(time);
+    art.drawMechanisms(time);
     for (const body of state.bodies.values()) art.drawContactShadow(body);
     const boxFront = art.drawBox(time);
     for (const item of LEVELS[state.level].items) {
@@ -568,7 +635,9 @@
     state.frame = requestAnimationFrame(tick);
     const delta = Math.min(50, Math.max(0, time - (state.time || time)));
     state.time = time;
+    updateBeltCycle(time);
     if (state.engine) updateGravity(time);
+    moveLamp(time);
     if (state.motionMode === 'waiting' && time - state.motionStartedAt > 3500) {
       stopMotion('没有收到传感器数据，已切换为按钮操作。');
     }
@@ -579,6 +648,7 @@
       state.accumulator = Math.min(50, state.accumulator + delta);
       while (state.accumulator >= 16.6667) {
         Engine.update(state.engine, 16.6667);
+        applyRoomMechanics(time);
         state.accumulator -= 16.6667;
       }
       checkSwitch(time);
