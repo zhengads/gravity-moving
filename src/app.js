@@ -3,7 +3,7 @@
   const { Engine, Bodies, Body, Composite, Events, Sleeping } = Matter;
   const W = 1000, H = 680;
   const FLOOR = 604, CEILING = 76, LEFT = 62, RIGHT = 938;
-  const CATCH = { x: 808, y: 526, w: 116, h: 79 };
+  const CATCH = { x: 826, y: 530, w: 108, h: 74 };
   const DIRECTIONS = [
     { x: 0, y: 1, arrow: '↓', name: '向下' },
     { x: 1, y: 0, arrow: '→', name: '向右' },
@@ -46,7 +46,10 @@
   const canvas = $('gameCanvas');
   const ctx = canvas.getContext('2d');
   const roomImage = new Image();
-  roomImage.src = '/* ROOM_IMAGE */';
+  roomImage.src = '/* ROOM_EMPTY_IMAGE */';
+  const catImage = new Image();
+  catImage.src = '/* ROOM_IMAGE */';
+  let foliageLayers = null;
   const objectsImage = new Image();
   objectsImage.src = '/* OBJECTS_IMAGE */';
   const ready = image => image.complete && image.naturalWidth > 0;
@@ -77,7 +80,7 @@
   };
   const state = {
     level: 0, engine: null, bodies: new Map(), blocks: [], collected: new Set(), gravity: 0,
-    turns: 0, history: [], busy: false, won: false, sound: false, audio: null,
+    turns: 0, history: [], busy: false, won: false, sound: false, audio: null, noiseBuffer: null,
     time: 0, accumulator: 0, settleSince: 0, turnStarted: 0, catWake: 0, lastCollision: 0,
     noteTimer: 0, enteredAt: performance.now(), frame: 0, gateOpen: false, gateOpenedAt: 0,
     captures: [], winAt: 0, turnFeedbackUntil: 0, celebrateUntil: 0,
@@ -310,11 +313,15 @@
     Events.on(state.engine, 'collisionStart', event => {
       const now = performance.now();
       if (now - state.lastCollision < 110) return;
-      if (event.pairs.some(p => (p.bodyA.itemId || p.bodyB.itemId) && p.collision.depth > .6)) {
-        state.catWake = 1;
-        state.lastCollision = now;
-        sound('tap');
-      }
+      const impacts = event.pairs.filter(p => (p.bodyA.itemId || p.bodyB.itemId) && p.collision.depth > .6);
+      if (!impacts.length) return;
+      const pair = impacts.reduce((best, current) =>
+        Math.max(current.bodyA.speed, current.bodyB.speed) > Math.max(best.bodyA.speed, best.bodyB.speed) ? current : best);
+      const itemBody = pair.bodyA.itemId ? pair.bodyA : pair.bodyB;
+      const speed = Math.max(pair.bodyA.speed, pair.bodyB.speed);
+      state.catWake = 1;
+      state.lastCollision = now;
+      sound('tap', itemBody.itemKind, Math.max(.3, Math.min(1, speed / 10)));
     });
     elements.stageIndex.textContent = `房间 ${String(index + 1).padStart(2, '0')} / 03`;
     elements.stageLabel.textContent = LEVELS[index].room;
@@ -433,7 +440,7 @@
       state.bodies.delete('block');
       elements.roomHint.textContent = '门开了！现在把闹钟和笔记本送进箱子。';
       note('木块碰到了开关，门打开了');
-      sound('collect');
+      sound('gate');
     }
   }
   function win() {
@@ -447,29 +454,80 @@
     elements.nextButton.focus();
   }
 
-  function sound(kind) {
+  function sound(kind, material = 'ball', intensity = 1) {
     if (!state.sound) return;
     try {
       state.audio ||= new (window.AudioContext || window.webkitAudioContext)();
       if (state.audio.state === 'suspended') state.audio.resume();
-      const t = state.audio.currentTime;
-      const oscillator = state.audio.createOscillator();
-      const gain = state.audio.createGain();
-      oscillator.type = kind === 'tap' ? 'sine' : 'triangle';
-      const base = { tap: 220, turn: 310, collect: 600, win: 510 }[kind];
-      oscillator.frequency.setValueAtTime(base, t);
-      oscillator.frequency.exponentialRampToValueAtTime(kind === 'turn' ? base * .7 : base * 1.35, t + .10);
-      gain.gain.setValueAtTime(.0001, t);
-      gain.gain.exponentialRampToValueAtTime(kind === 'tap' ? .028 : .06, t + .015);
-      gain.gain.exponentialRampToValueAtTime(.0001, t + (kind === 'win' ? .37 : .17));
-      oscillator.connect(gain).connect(state.audio.destination);
-      oscillator.start(t); oscillator.stop(t + (kind === 'win' ? .4 : .18));
+      const audio = state.audio, t = audio.currentTime;
+      const tone = (type, startHz, endHz, at, duration, volume) => {
+        const oscillator = audio.createOscillator(), gain = audio.createGain();
+        oscillator.type = type;
+        oscillator.frequency.setValueAtTime(startHz, at);
+        oscillator.frequency.exponentialRampToValueAtTime(endHz, at + duration);
+        gain.gain.setValueAtTime(.0001, at);
+        gain.gain.exponentialRampToValueAtTime(Math.max(.0002, volume), at + Math.min(.014, duration * .18));
+        gain.gain.exponentialRampToValueAtTime(.0001, at + duration);
+        oscillator.connect(gain).connect(audio.destination);
+        oscillator.start(at); oscillator.stop(at + duration + .02);
+      };
+      const noise = (at, duration, volume, cutoff) => {
+        if (!state.noiseBuffer) {
+          const buffer = audio.createBuffer(1, Math.ceil(audio.sampleRate * .25), audio.sampleRate);
+          const samples = buffer.getChannelData(0);
+          for (let i = 0; i < samples.length; i++) samples[i] = Math.random() * 2 - 1;
+          state.noiseBuffer = buffer;
+        }
+        const source = audio.createBufferSource(), filter = audio.createBiquadFilter(), gain = audio.createGain();
+        source.buffer = state.noiseBuffer;
+        filter.type = 'lowpass'; filter.frequency.value = cutoff;
+        gain.gain.setValueAtTime(.0001, at);
+        gain.gain.exponentialRampToValueAtTime(Math.max(.0002, volume), at + .006);
+        gain.gain.exponentialRampToValueAtTime(.0001, at + duration);
+        source.connect(filter).connect(gain).connect(audio.destination);
+        source.start(at); source.stop(at + duration + .01);
+      };
+      if (kind === 'tap') {
+        if (material === 'ball') {
+          tone('sine', 340, 165, t, .115, .035 * intensity);
+          tone('triangle', 130, 90, t, .07, .012 * intensity);
+        } else if (material === 'book') {
+          noise(t, .09, .023 * intensity, 1150);
+          tone('sine', 125, 85, t, .09, .012 * intensity);
+        } else if (material === 'clock') {
+          tone('sine', 910, 750, t, .24, .021 * intensity);
+          tone('sine', 1350, 1120, t + .035, .28, .012 * intensity);
+        } else {
+          tone('triangle', 205, 95, t, .13, .038 * intensity);
+          noise(t, .075, .012 * intensity, 650);
+        }
+      } else if (kind === 'turn') {
+        tone('triangle', 310, 185, t, .14, .037);
+        noise(t, .055, .009, 900);
+      } else if (kind === 'collect') {
+        noise(t, .11, .012, 2300);
+        tone('sine', 480, 690, t + .035, .25, .042);
+        tone('sine', 900, 1180, t + .13, .29, .025);
+      } else if (kind === 'gate') {
+        tone('square', 260, 190, t, .10, .015);
+        tone('sine', 520, 780, t + .11, .2, .025);
+      } else if (kind === 'win') {
+        [523, 659, 784, 1047].forEach((pitch, index) => {
+          tone('sine', pitch, pitch * 1.01, t + index * .15, .44, .03);
+          tone('triangle', pitch / 2, pitch / 2, t + index * .15, .27, .012);
+        });
+      } else if (kind === 'ui') {
+        tone('sine', 620, 810, t, .12, .025);
+      }
     } catch { /* Audio is optional. */ }
   }
 
   function drawBackdrop(time) {
     if (ready(roomImage)) {
       ctx.drawImage(roomImage, 0, 0, W, H);
+      if (ready(catImage)) drawFoliage(time, 'top');
+      if (ready(catImage)) drawAnimatedCat(time);
+      if (ready(catImage)) drawFoliage(time, 'vine');
       return;
     }
     const level = LEVELS[state.level];
@@ -543,6 +601,104 @@
     ellipse(824, 219, 2, 1.5, '#a36a67');
     line(805, 220, 812, 220, '#a37364'); line(835, 220, 843, 219, '#a37364');
     state.catWake = Math.max(0, state.catWake - .012);
+  }
+
+  function drawAnimatedCat(time) {
+    // The room is painted without the cat; the original matching artwork is
+    // clipped into movable head and still paws so it never looks pasted on.
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(815, 201, 11, 7, 0, 0, Math.PI * 2);
+    ctx.ellipse(839, 201, 11, 7, 0, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.drawImage(catImage, 0, 0, W, H);
+    ctx.restore();
+
+    const awake = Math.min(1, state.catWake);
+    const sway = Math.sin(time * .0011) * .045 + awake * Math.sin(time * .011) * .07;
+    const bob = Math.sin(time * .0017) * 1.1 + awake * Math.sin(time * .012) * 1.8;
+    ctx.save();
+    ctx.translate(826, 195 + bob);
+    ctx.rotate(sway);
+    ctx.translate(-826, -195);
+    ctx.beginPath();
+    ctx.ellipse(826, 176, 36, 30, 0, 0, Math.PI * 2);
+    ctx.moveTo(807, 163); ctx.lineTo(810, 143); ctx.lineTo(825, 160); ctx.closePath();
+    ctx.moveTo(835, 158); ctx.lineTo(851, 142); ctx.lineTo(856, 169); ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(catImage, 0, 0, W, H);
+
+    const blinkTime = time % 4200;
+    if (blinkTime < 130 || (blinkTime > 225 && blinkTime < 310)) {
+      for (const [x, color] of [[815, '#bc6d39'], [833, '#d0783f']]) {
+        ellipse(x, 174, 5.5, 5, color);
+        ctx.beginPath(); ctx.moveTo(x - 4.5, 175); ctx.quadraticCurveTo(x, 178, x + 4.5, 175);
+        ctx.strokeStyle = '#67412e'; ctx.lineWidth = 1.4; ctx.stroke();
+      }
+    }
+    ctx.restore();
+    state.catWake = Math.max(0, state.catWake - .012);
+  }
+
+  function prepareFoliage() {
+    // Isolate the original room's olive/yellow leaves once. Keeping their
+    // painted pixels retains the exact lighting and perspective of the room.
+    const source = document.createElement('canvas');
+    source.width = W; source.height = H;
+    const sourceCtx = source.getContext('2d', { willReadFrequently: true });
+    sourceCtx.drawImage(catImage, 0, 0, W, H);
+    const original = sourceCtx.getImageData(0, 0, W, H);
+    const regions = {
+      top: [770, 62, 871, 146],
+      vine: [838, 187, 919, 357],
+    };
+    foliageLayers = {};
+    for (const [name, [left, top, right, bottom]] of Object.entries(regions)) {
+      const layer = document.createElement('canvas');
+      layer.width = right - left; layer.height = bottom - top;
+      const layerCtx = layer.getContext('2d');
+      const pixels = layerCtx.createImageData(layer.width, layer.height);
+      for (let y = top; y < bottom; y++) {
+        for (let x = left; x < right; x++) {
+          const sourceIndex = (y * W + x) * 4;
+          const i = ((y - top) * layer.width + x - left) * 4;
+          const r = original.data[sourceIndex], g = original.data[sourceIndex + 1], b = original.data[sourceIndex + 2];
+          const olive = Math.min(1, Math.max(0, (g - b - 5) / 13), Math.max(0, (g - r * .7) / 11));
+          if (olive <= 0) continue;
+          pixels.data[i] = r;
+          pixels.data[i + 1] = g;
+          pixels.data[i + 2] = b;
+          pixels.data[i + 3] = Math.round(255 * olive);
+        }
+      }
+      layerCtx.putImageData(pixels, 0, 0);
+      foliageLayers[name] = { image: layer, x: left, y: top };
+    }
+  }
+
+  function drawFoliage(time, which) {
+    if (!foliageLayers) prepareFoliage();
+    const wind = Math.sin(time * .00115) + .28 * Math.sin(time * .0023 + 1.4);
+    const top = which === 'top';
+    const anchorX = top ? 812 : 895;
+    const anchorY = top ? 68 : 191;
+    ctx.save();
+    ctx.translate(anchorX, anchorY);
+    ctx.rotate(wind * (top ? .029 : .022));
+    ctx.translate(-anchorX, -anchorY);
+    // A fine stem makes the vine read as attached to the sill as its leaves sway.
+    if (!top) {
+      ctx.beginPath();
+      ctx.moveTo(895, 195);
+      ctx.bezierCurveTo(880, 215, 907, 230, 895, 260);
+      ctx.bezierCurveTo(879, 286, 896, 317, 882, 345);
+      ctx.strokeStyle = 'rgba(77, 72, 35, .64)';
+      ctx.lineWidth = 1.45;
+      ctx.stroke();
+    }
+    const layer = foliageLayers[which];
+    ctx.drawImage(layer.image, layer.x, layer.y);
+    ctx.restore();
   }
   function drawEntryDetails() {
     // Low console table, painted as set dressing outside the collision path.
@@ -623,16 +779,24 @@
 
   function drawBox(time) {
     if (ready(objectsImage)) {
-      return () => {
+      const paint = () => {
         const last = state.captures.at(-1);
         const age = last ? time - last.startedAt : -1000;
         const impact = Math.max(0, 1 - Math.abs(age - 450) / 240);
         const shake = Math.sin(age * .12) * impact * 3;
         ctx.save();
-        ctx.translate(870 + shake, 537.5 - impact * 9);
+        ctx.translate(868 + shake, 548 - impact * 5);
+        ctx.rotate(-Math.PI / 2);
         ctx.scale(1 + impact * .055, 1 + impact * .055);
         ctx.shadowColor = 'rgba(18,14,11,.28)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 12;
-        sprite(...SPRITES.box, -80, -71.5, 160, 143);
+        sprite(...SPRITES.box, -66, -59, 132, 118);
+        ctx.restore();
+      };
+      paint();
+      return () => {
+        ctx.save();
+        ctx.beginPath(); ctx.rect(855, 470, 90, 145); ctx.clip();
+        paint();
         ctx.restore();
       };
     }
@@ -772,7 +936,7 @@
       if (progress >= 1) continue;
       const eased = 1 - Math.pow(1 - progress, 3);
       const item = LEVELS[state.level].items.find(i => i.id === capture.id);
-      const body = { position: { x: capture.x + (865 - capture.x) * eased, y: capture.y + (568 - capture.y) * eased }, angle: capture.angle + eased * .18 };
+      const body = { position: { x: capture.x + (880 - capture.x) * eased, y: capture.y + (554 - capture.y) * eased }, angle: capture.angle + eased * .18 };
       drawItem(item, body, time, 1 - eased * .55, 1 - eased);
     }
     boxFront();
@@ -834,7 +998,7 @@
     elements.soundButton.setAttribute('aria-label', state.sound ? '关闭游戏音效，当前已开启' : '开启游戏音效，当前已关闭');
     elements.soundButton.title = state.sound ? '音效已开启' : '音效已关闭';
     elements.soundState.textContent = state.sound ? '开' : '关';
-    if (state.sound) sound('collect');
+    if (state.sound) sound('ui');
   }
 
   elements.turnLeft.addEventListener('click', () => turn(-1));

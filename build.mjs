@@ -13,6 +13,7 @@ const htmlBody = template
   .replace('/* STYLE_INLINE */', read('src/style.css'))
   .replace('/* MATTER_INLINE */', read('node_modules/matter-js/build/matter.min.js'))
   .replace('/* GAME_INLINE */', read('src/app.js')
+    .replace('/* ROOM_EMPTY_IMAGE */', data('src/assets/room-clean-v3.webp','image/webp'))
     .replace('/* ROOM_IMAGE */', data('src/assets/room.webp','image/webp'))
     .replace('/* OBJECTS_IMAGE */', data('src/assets/objects.webp','image/webp')));
 const licenses = [
@@ -23,7 +24,7 @@ const licenses = [
 ].join('\n');
 const html = `<!--\n${licenses.replaceAll('-->', '-- &gt;')}\n-->\n${htmlBody}`;
 
-if (html.includes('/* STYLE_INLINE */') || html.includes('/* MATTER_INLINE */') || html.includes('/* GAME_INLINE */') || html.includes('/* ROOM_IMAGE */') || html.includes('/* OBJECTS_IMAGE */')) {
+if (html.includes('/* STYLE_INLINE */') || html.includes('/* MATTER_INLINE */') || html.includes('/* GAME_INLINE */') || html.includes('/* ROOM_EMPTY_IMAGE */') || html.includes('/* ROOM_IMAGE */') || html.includes('/* OBJECTS_IMAGE */')) {
   throw new Error('Build placeholder remains');
 }
 fs.writeFileSync(path.join(root, 'index.html'), html, 'utf8');
