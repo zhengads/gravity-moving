@@ -45,6 +45,7 @@
   const $ = (id) => document.getElementById(id);
   const canvas = $('gameCanvas');
   const ctx = canvas.getContext('2d');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const roomImage = new Image();
   roomImage.src = '/* ROOM_EMPTY_IMAGE */';
   const catImage = new Image();
@@ -525,7 +526,10 @@
   function drawBackdrop(time) {
     if (ready(roomImage)) {
       ctx.drawImage(roomImage, 0, 0, W, H);
-      if (ready(catImage)) drawFoliage(time, 'top');
+      if (ready(catImage)) {
+        drawFoliage(time, 'topLeft');
+        drawFoliage(time, 'topRight');
+      }
       if (ready(catImage)) drawAnimatedCat(time);
       if (ready(catImage)) drawFoliage(time, 'vine');
       return;
@@ -614,12 +618,16 @@
     ctx.drawImage(catImage, 0, 0, W, H);
     ctx.restore();
 
+    const motion = reducedMotion.matches ? 0 : 1;
     const awake = Math.min(1, state.catWake);
-    const sway = Math.sin(time * .0011) * .045 + awake * Math.sin(time * .011) * .07;
-    const bob = Math.sin(time * .0017) * 1.1 + awake * Math.sin(time * .012) * 1.8;
+    const breathing = Math.sin(time * .0021 - .4);
+    const sway = motion * (Math.sin(time * .00105 + .5) * .059 + Math.sin(time * .00051) * .018 + awake * Math.sin(time * .011) * .07);
+    const bob = motion * (breathing * 1.65 + Math.sin(time * .00083) * .55 + awake * Math.sin(time * .012) * 1.8);
+    const side = motion * (Math.sin(time * .00094) * 2.35 + Math.sin(time * .0017 + 1.1) * .65);
     ctx.save();
-    ctx.translate(826, 195 + bob);
+    ctx.translate(826 + side, 195 + bob);
     ctx.rotate(sway);
+    ctx.scale(1 + motion * breathing * .007, 1 + motion * breathing * .011);
     ctx.translate(-826, -195);
     ctx.beginPath();
     ctx.ellipse(826, 176, 36, 30, 0, 0, Math.PI * 2);
@@ -628,8 +636,8 @@
     ctx.clip();
     ctx.drawImage(catImage, 0, 0, W, H);
 
-    const blinkTime = time % 4200;
-    if (blinkTime < 130 || (blinkTime > 225 && blinkTime < 310)) {
+    const blinkTime = time % 5800;
+    if ((blinkTime > 4700 && blinkTime < 5050) || (blinkTime > 5200 && blinkTime < 5310)) {
       for (const [x, color] of [[815, '#bc6d39'], [833, '#d0783f']]) {
         ellipse(x, 174, 5.5, 5, color);
         ctx.beginPath(); ctx.moveTo(x - 4.5, 175); ctx.quadraticCurveTo(x, 178, x + 4.5, 175);
@@ -649,7 +657,8 @@
     sourceCtx.drawImage(catImage, 0, 0, W, H);
     const original = sourceCtx.getImageData(0, 0, W, H);
     const regions = {
-      top: [770, 62, 871, 146],
+      topLeft: [770, 62, 831, 146],
+      topRight: [831, 62, 871, 146],
       vine: [838, 187, 919, 357],
     };
     foliageLayers = {};
@@ -678,16 +687,19 @@
 
   function drawFoliage(time, which) {
     if (!foliageLayers) prepareFoliage();
-    const wind = Math.sin(time * .00115) + .28 * Math.sin(time * .0023 + 1.4);
-    const top = which === 'top';
-    const anchorX = top ? 812 : 895;
-    const anchorY = top ? 68 : 191;
+    const motion = reducedMotion.matches ? 0 : 1;
+    const wind = Math.sin(time * .0011) + .26 * Math.sin(time * .00255 + 1.4);
+    const [anchorX, anchorY, angle] = which === 'topLeft'
+      ? [796, 68, wind * .068]
+      : which === 'topRight'
+        ? [855, 82, (Math.sin(time * .00104 + .85) + .21 * Math.sin(time * .0028)) * .062]
+        : [895, 191, (Math.sin(time * .00091 + .42) + .18 * Math.sin(time * .0019 + 2)) * .052];
     ctx.save();
     ctx.translate(anchorX, anchorY);
-    ctx.rotate(wind * (top ? .029 : .022));
+    ctx.rotate(angle * motion);
     ctx.translate(-anchorX, -anchorY);
     // A fine stem makes the vine read as attached to the sill as its leaves sway.
-    if (!top) {
+    if (which === 'vine') {
       ctx.beginPath();
       ctx.moveTo(895, 195);
       ctx.bezierCurveTo(880, 215, 907, 230, 895, 260);
