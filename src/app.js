@@ -20,55 +20,77 @@
     {
       room: '书房', title: '书架挡住了路。', hint: '想办法让物品先经过书架上方。', color: '#eaf1e9', floor: '#ab947d',
       items: [
-        { id: 'ball', kind: 'ball', label: '网球', x: 177, y: 574, radius: 30, target: true },
+        { id: 'ball', kind: 'ball', label: '网球', x: 230, y: 574, radius: 30, target: true },
         { id: 'book', kind: 'book', label: '笔记本', x: 296, y: 569, w: 60, h: 70, target: true },
       ],
       blocks: [{ x: 477, y: 388, w: 148, h: 428, kind: 'shelf' }],
       tip: '先往上，再绕过书架。',
     },
     {
-      room: '客厅', title: '留给最后一箱。', hint: '把木块送到高处的橙色开关，打开收纳通道。', color: '#f0e9e5', floor: '#b48b71',
+      room: '客厅', title: '客厅里有一道门。', hint: '把木块送到高处的橙色开关，打开收纳通道。', color: '#f0e9e5', floor: '#b48b71',
       items: [
         { id: 'clock', kind: 'clock', label: '闹钟', x: 180, y: 571, w: 64, h: 66, target: true },
         { id: 'book', kind: 'book', label: '笔记本', x: 304, y: 569, w: 60, h: 70, target: true },
         { id: 'block', kind: 'block', label: '木块', x: 630, y: 394, w: 65, h: 65, target: false },
       ],
       blocks: [
-        { x: 478, y: 388, w: 148, h: 428, kind: 'shelf' },
+        { x: 478, y: 388, w: 148, h: 428, kind: 'divider' },
         { x: 697, y: 439, w: 160, h: 24, kind: 'ledge' },
         { x: 775, y: 437, w: 32, h: 334, kind: 'gate' },
       ],
+      switch: { item: 'block', minX: 651, maxX: 731, maxY: 142, x: 692, y: 88 },
       tip: '只有木块能启动高处的开关。',
     },
+    {
+      room: '厨房', title: '再收好厨房的小物件。', hint: '料理台改变了路线；让木块先碰到高处开关。', color: '#e7e8d2', floor: '#b89269',
+      items: [
+        { id: 'ball', kind: 'ball', label: '网球', x: 155, y: 570, radius: 30, target: true },
+        { id: 'book', kind: 'book', label: '食谱', x: 250, y: 569, w: 60, h: 70, target: true },
+        { id: 'mug', kind: 'mug', label: '马克杯', x: 350, y: 571, w: 60, h: 66, target: true },
+        { id: 'block', kind: 'block', label: '木块', x: 630, y: 394, w: 65, h: 65, target: false },
+      ],
+      blocks: [
+        { x: 478, y: 450, w: 148, h: 304, kind: 'counter' },
+        { x: 697, y: 439, w: 160, h: 24, kind: 'ledge' },
+        { x: 775, y: 437, w: 32, h: 334, kind: 'gate' },
+      ],
+      switch: { item: 'block', minX: 651, maxX: 731, maxY: 142, x: 692, y: 88 },
+      tip: '杯子比较重；先观察它会停在哪里。',
+    },
+    {
+      room: '工作间', title: '最后一间，慢慢来。', hint: '让木块打开通道，再把四件物品都送进纸箱。', color: '#dce0e4', floor: '#ad8c78',
+      items: [
+        { id: 'ball', kind: 'ball', label: '网球', x: 135, y: 570, radius: 30, target: true },
+        { id: 'book', kind: 'book', label: '笔记本', x: 218, y: 569, w: 60, h: 70, target: true },
+        { id: 'clock', kind: 'clock', label: '闹钟', x: 310, y: 571, w: 64, h: 66, target: true },
+        { id: 'mug', kind: 'mug', label: '马克杯', x: 385, y: 571, w: 60, h: 66, target: true },
+        { id: 'block', kind: 'block', label: '木块', x: 630, y: 394, w: 65, h: 65, target: false },
+      ],
+      blocks: [
+        { x: 490, y: 470, w: 132, h: 264, kind: 'workbench' },
+        { x: 697, y: 439, w: 160, h: 24, kind: 'ledge' },
+        { x: 775, y: 437, w: 32, h: 334, kind: 'gate' },
+      ],
+      switch: { item: 'block', minX: 651, maxX: 731, maxY: 142, x: 692, y: 88 },
+      tip: '想一想：先开门，还是先收纳？',
+    },
+  ];
+  const TRANSITION_TIPS = [
+    '搬家小贴士：先轻轻推，留出转身的空间。',
+    '游戏提示：利用天花板，也能绕开家具。',
+    '小猫说：看见橙色开关，就找找能碰它的木块。',
+    '生活小贴士：易碎物品单独包装，杯子别和书挤在一起。',
+    '游戏提示：每件物品的重量与弹性都不同，耐心观察。',
   ];
 
   const $ = (id) => document.getElementById(id);
   const canvas = $('gameCanvas');
   const ctx = canvas.getContext('2d');
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const roomImage = new Image();
-  roomImage.src = '/* ROOM_EMPTY_IMAGE */';
-  const catImage = new Image();
-  catImage.src = '/* ROOM_IMAGE */';
-  let foliageLayers = null;
-  const objectsImage = new Image();
-  objectsImage.src = '/* OBJECTS_IMAGE */';
-  const ready = image => image.complete && image.naturalWidth > 0;
-  const sprite = (sx, sy, sw, sh, dx, dy, dw, dh) => ctx.drawImage(objectsImage, sx, sy, sw, sh, dx, dy, dw, dh);
-  // Crop away transparent padding so the drawn object matches its Matter collider.
-  const SPRITES = {
-    ball: [118, 157, 299, 299, 64, 64],
-    book: [613, 88, 311, 384, 62, 72],
-    clock: [1122, 49, 313, 419, 66, 70],
-    block: [610, 598, 341, 340, 66, 66],
-    shelf: [1150, 520, 270, 443],
-    box: [62, 556, 504, 405],
-  };
   const elements = {
     stageFrame: document.querySelector('.stage-frame'),
     stageSection: document.querySelector('.stage-section'),
     stageIndex: $('stageIndex'), stageLabel: $('stageLabel'), roomTitle: $('roomTitle'), roomHint: $('roomHint'),
-    objectiveList: $('objectiveList'), gravityArrow: $('gravityArrow'), turnCount: $('turnCount'),
+    objectiveList: $('objectiveList'),
     turnLeft: $('turnLeft'), turnRight: $('turnRight'), undoButton: $('undoButton'), resetButton: $('resetButton'),
     railTip: $('railTip'), stageNote: $('stageNote'), result: $('result'), resultTitle: $('resultTitle'),
     resultText: $('resultText'), resultKicker: $('resultKicker'), nextButton: $('nextButton'),
@@ -77,17 +99,21 @@
     settingsDialog: $('settingsDialog'), settingsButton: $('settingsButton'), settingsClose: $('settingsClose'),
     modeMotion: $('modeMotion'), modeButtons: $('modeButtons'), motionStatus: $('motionStatus'),
     levelButtons: [...document.querySelectorAll('.level-option')], controlPanel: document.querySelector('.control-panel'),
-    hudArrow: $('hudArrow'), hudMode: $('hudMode'),
+    catIntro: $('catIntro'), catIntroText: $('catIntroText'), catIntroStep: $('catIntroStep'), catIntroNext: $('catIntroNext'),
+    catIntroImage: $('catIntroImage'), pixelTransition: $('pixelTransition'), transitionCatImage: $('transitionCatImage'),
+    transitionKicker: $('transitionKicker'), transitionRoom: $('transitionRoom'), transitionTip: $('transitionTip'),
   };
   const state = {
     level: 0, engine: null, bodies: new Map(), blocks: [], collected: new Set(), gravity: 0,
     turns: 0, history: [], busy: false, won: false, sound: false, audio: null, noiseBuffer: null,
-    time: 0, accumulator: 0, settleSince: 0, turnStarted: 0, catWake: 0, lastCollision: 0,
+    time: 0, accumulator: 0, settleSince: 0, turnStarted: 0, catWake: 0, lastCollision: 0, lastObjectCollision: 0,
     noteTimer: 0, enteredAt: performance.now(), frame: 0, gateOpen: false, gateOpenedAt: 0,
     captures: [], winAt: 0, turnFeedbackUntil: 0, celebrateUntil: 0,
     targetGravity: { x: 0, y: 1 }, displayedGravity: { x: 0, y: 1 },
     motionMode: 'off', motionKind: null, motionLastAt: 0, motionStartedAt: 0, started: false,
+    introStep: -1, transitionTimer: 0, transitioning: false, levels: LEVELS,
   };
+  const art = createPixelArt(ctx, state);
 
   function setGravityTarget(x, y) {
     const length = Math.hypot(x, y);
@@ -109,10 +135,6 @@
     gravity.y = y;
     state.displayedGravity.x = x;
     state.displayedGravity.y = y;
-    const angle = -Math.atan2(x, y);
-    const rotation = `rotate(${angle}rad)`;
-    elements.gravityArrow.style.transform = rotation;
-    elements.hudArrow.style.transform = rotation;
     if (time - (state.lastAriaAt || 0) > 500) {
       canvas.setAttribute('aria-label', `${LEVELS[state.level].room}游戏画面，重力${directionName(x, y)}，已收纳${state.collected.size}件物品`);
       state.lastAriaAt = time;
@@ -135,7 +157,6 @@
     elements.modeButtons.setAttribute('aria-pressed', String(!motionSelected));
     elements.modeMotion.disabled = state.motionMode === 'waiting';
     elements.motionStatus.textContent = message || (state.motionMode === 'waiting' ? '正在等待手机传感器…' : motionSelected ? '体感已开启，竖屏倾斜手机即可控制。' : '按钮操作中，可随时改为体感。');
-    elements.hudMode.textContent = motionSelected ? '手机体感' : '按钮操控';
     if (state.level === 0) {
       elements.roomHint.textContent = motionSelected ? '倾斜手机，让小球滚进纸箱。' : '点右侧按钮，让小球滚进纸箱。';
       elements.railTip.textContent = motionSelected ? '慢慢倾斜手机，观察小球的运动。' : '试试右侧按钮，看看小球会去哪里。';
@@ -204,7 +225,7 @@
     if (state.motionMode === 'waiting') {
       state.motionMode = 'on';
       state.busy = false;
-      updateMotionUI('体感已开启。慢慢倾斜手机，让物件沿箭头方向移动。');
+      updateMotionUI('体感已开启。慢慢倾斜手机，让物件自然移动。');
       if (state.started && !elements.settingsDialog.open) note('体感已开启，倾斜手机改变重力');
     }
     if (changed) for (const body of state.bodies.values()) Sleeping.set(body, false);
@@ -223,22 +244,6 @@
     // Positive beta is upright (down on screen); positive gamma tips right.
     acceptMotion(Math.sin(event.gamma * Math.PI / 180) * 1.45,
       Math.sin(event.beta * Math.PI / 180) * 1.45, 'orientation');
-  }
-
-  function roundRect(x, y, w, h, r, fill, stroke, lw = 1) {
-    ctx.beginPath(); ctx.roundRect(x, y, w, h, r);
-    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
-    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.stroke(); }
-  }
-  function ellipse(x, y, rx, ry, fill) {
-    ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.fillStyle = fill; ctx.fill();
-  }
-  function line(x1, y1, x2, y2, color, width = 1) {
-    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.strokeStyle = color; ctx.lineWidth = width; ctx.stroke();
-  }
-  function text(str, x, y, size, color, weight = 700, align = 'left') {
-    ctx.fillStyle = color; ctx.font = `${weight} ${size}px NotoSC, sans-serif`;
-    ctx.textAlign = align; ctx.textBaseline = 'middle'; ctx.fillText(str, x, y);
   }
 
   function makeItem(item) {
@@ -272,7 +277,6 @@
     state.celebrateUntil = 0;
     elements.turnLeft.classList.remove('turn-fired');
     elements.turnRight.classList.remove('turn-fired');
-    elements.gravityArrow.classList.remove('arrow-fired');
     elements.stageFrame.classList.remove('gravity-pulse');
     elements.stageFrame.classList.remove('celebrating');
     state.history = restore?.history ?? [];
@@ -313,18 +317,25 @@
     }
     Events.on(state.engine, 'collisionStart', event => {
       const now = performance.now();
-      if (now - state.lastCollision < 110) return;
       const impacts = event.pairs.filter(p => (p.bodyA.itemId || p.bodyB.itemId) && p.collision.depth > .6);
       if (!impacts.length) return;
-      const pair = impacts.reduce((best, current) =>
-        Math.max(current.bodyA.speed, current.bodyB.speed) > Math.max(best.bodyA.speed, best.bodyB.speed) ? current : best);
-      const itemBody = pair.bodyA.itemId ? pair.bodyA : pair.bodyB;
-      const speed = Math.max(pair.bodyA.speed, pair.bodyB.speed);
+      // Two moving objects get their own layered sound, even when one of them
+      // also touches a wall in this physics step.
+      const objectPairs = impacts.filter(p => p.bodyA.itemId && p.bodyB.itemId);
+      const candidates = objectPairs.length ? objectPairs : impacts;
+      const relativeSpeed = p => Math.hypot(p.bodyA.velocity.x - p.bodyB.velocity.x, p.bodyA.velocity.y - p.bodyB.velocity.y);
+      const pair = candidates.reduce((best, current) => relativeSpeed(current) > relativeSpeed(best) ? current : best);
+      const speed = relativeSpeed(pair);
+      if (speed < .65) return;
+      if (objectPairs.length ? now - state.lastObjectCollision < 90 : now - state.lastCollision < 110) return;
       state.catWake = 1;
-      state.lastCollision = now;
-      sound('tap', itemBody.itemKind, Math.max(.3, Math.min(1, speed / 10)));
+      if (objectPairs.length) state.lastObjectCollision = now;
+      else state.lastCollision = now;
+      const intensity = Math.max(.32, Math.min(1, speed / 9));
+      if (objectPairs.length) sound('clash', pair.bodyA.itemKind, intensity, pair.bodyB.itemKind);
+      else sound('tap', (pair.bodyA.itemId ? pair.bodyA : pair.bodyB).itemKind, intensity);
     });
-    elements.stageIndex.textContent = `房间 ${String(index + 1).padStart(2, '0')} / 03`;
+    elements.stageIndex.textContent = `房间 ${String(index + 1).padStart(2, '0')} / ${String(LEVELS.length).padStart(2, '0')}`;
     elements.stageLabel.textContent = LEVELS[index].room;
     elements.roomTitle.textContent = LEVELS[index].title;
     elements.roomHint.textContent = LEVELS[index].hint;
@@ -340,7 +351,7 @@
     return { positions, collected: [...state.collected], gravity: state.gravity, turns: state.turns, gateOpen: state.gateOpen };
   }
   function turn(amount) {
-    if (!state.started || (state.busy && state.motionMode === 'off') || state.won || elements.helpDialog.open || elements.settingsDialog.open || elements.startDialog.open) return;
+    if (!state.started || state.transitioning || !elements.catIntro.hidden || (state.busy && state.motionMode === 'off') || state.won || elements.helpDialog.open || elements.settingsDialog.open || elements.startDialog.open) return;
     if (state.motionMode !== 'off') {
       const { x, y } = state.displayedGravity;
       state.gravity = Math.abs(x) > Math.abs(y) ? (x > 0 ? 1 : 3) : (y > 0 ? 0 : 2);
@@ -358,16 +369,13 @@
     fired.classList.remove('turn-fired');
     void fired.offsetWidth;
     fired.classList.add('turn-fired');
-    elements.gravityArrow.classList.remove('arrow-fired');
-    void elements.gravityArrow.offsetWidth;
-    elements.gravityArrow.classList.add('arrow-fired');
     elements.stageFrame.classList.remove('gravity-pulse');
     void elements.stageFrame.offsetWidth;
     elements.stageFrame.classList.add('gravity-pulse');
     elements.stageFrame.style.setProperty('--pulse-angle', `${state.gravity * 90}deg`);
     state.settleSince = 0;
     sound('turn');
-    note(`重力${DIRECTIONS[state.gravity].name} · 房间保持正立`);
+    note(`重力${DIRECTIONS[state.gravity].name}`);
     updateUI();
   }
   function undo() {
@@ -382,9 +390,7 @@
 
   function updateUI() {
     const targets = LEVELS[state.level].items.filter(i => i.target);
-    elements.objectiveList.innerHTML = targets.map(i => `<span class="objective-item ${state.collected.has(i.id) ? 'done' : ''}"><span class="dot" aria-hidden="true">${state.collected.has(i.id) ? '✓' : ({ ball: '●', book: '▰', clock: '◉' }[i.kind])}</span>${i.label}</span>`).join('');
-    elements.gravityArrow.textContent = '↓';
-    elements.turnCount.textContent = state.motionMode !== 'off' ? '手机体感中' : `已转 ${state.turns} 次`;
+    elements.objectiveList.innerHTML = targets.map(i => `<span class="objective-item ${state.collected.has(i.id) ? 'done' : ''}"><span class="dot" aria-hidden="true">${state.collected.has(i.id) ? '✓' : ({ ball: '●', book: '▰', clock: '◉', mug: '▣' }[i.kind])}</span>${i.label}</span>`).join('');
     elements.turnLeft.disabled = (state.busy && state.motionMode === 'off') || state.won;
     elements.turnRight.disabled = (state.busy && state.motionMode === 'off') || state.won;
     elements.undoButton.disabled = state.history.length === 0;
@@ -429,24 +435,25 @@
     }
   }
   function checkSwitch(time) {
-    if (state.level !== 2 || state.gateOpen) return;
-    const block = state.bodies.get('block');
+    const trigger = LEVELS[state.level].switch;
+    if (!trigger || state.gateOpen) return;
+    const block = state.bodies.get(trigger.item);
     if (!block) return;
-    if (block.position.x > 651 && block.position.x < 731 && block.position.y < 142) {
+    if (block.position.x > trigger.minX && block.position.x < trigger.maxX && block.position.y < trigger.maxY) {
       state.gateOpen = true;
       state.gateOpenedAt = time;
       const gate = state.blocks.find(b => b.kind === 'gate');
       if (gate) Composite.remove(state.engine.world, gate.body);
       Composite.remove(state.engine.world, block);
-      state.bodies.delete('block');
-      elements.roomHint.textContent = '门开了！现在把闹钟和笔记本送进箱子。';
+      state.bodies.delete(trigger.item);
+      elements.roomHint.textContent = '门开了！现在把待收纳的物品送进箱子。';
       note('木块碰到了开关，门打开了');
       sound('gate');
     }
   }
   function win() {
     updateUI();
-    elements.resultKicker.textContent = state.level === LEVELS.length - 1 ? '三间房，全部收好' : '打包完成';
+    elements.resultKicker.textContent = state.level === LEVELS.length - 1 ? `${LEVELS.length} 间房，全部收好` : '打包完成';
     elements.resultTitle.textContent = state.level === LEVELS.length - 1 ? '搬家完成！' : '这一间，收好了。';
     elements.resultText.textContent = `${state.motionMode === 'on' ? '通过手机倾斜改变重力。' : `改变了 ${state.turns} 次重力方向。`}${state.level === LEVELS.length - 1 ? '所有物品都已收纳，可以放心搬进新家。' : '下一间房还有一些小麻烦。'}`;
     elements.nextButton.textContent = state.level === LEVELS.length - 1 ? '再玩一遍 ↗' : '下一间 ↗';
@@ -455,7 +462,7 @@
     elements.nextButton.focus();
   }
 
-  function sound(kind, material = 'ball', intensity = 1) {
+  function sound(kind, material = 'ball', intensity = 1, otherMaterial = null) {
     if (!state.sound) return;
     try {
       state.audio ||= new (window.AudioContext || window.webkitAudioContext)();
@@ -488,7 +495,20 @@
         source.connect(filter).connect(gain).connect(audio.destination);
         source.start(at); source.stop(at + duration + .01);
       };
-      if (kind === 'tap') {
+      if (kind === 'clash') {
+        const voices = {
+          ball: ['sine', 395, 215, .028],
+          book: ['triangle', 155, 92, .021],
+          clock: ['sine', 1030, 775, .023],
+          mug: ['sine', 725, 515, .025],
+          block: ['square', 235, 118, .018],
+        };
+        const first = voices[material], second = voices[otherMaterial];
+        tone(first[0], first[1], first[2], t, .14, first[3] * intensity);
+        tone(second[0], second[1], second[2], t + .032, .18, second[3] * intensity);
+        if (material === 'book' || otherMaterial === 'book') noise(t, .085, .015 * intensity, 1400);
+        if (material === 'block' || otherMaterial === 'block') noise(t, .055, .012 * intensity, 700);
+      } else if (kind === 'tap') {
         if (material === 'ball') {
           tone('sine', 340, 165, t, .115, .035 * intensity);
           tone('triangle', 130, 90, t, .07, .012 * intensity);
@@ -498,6 +518,9 @@
         } else if (material === 'clock') {
           tone('sine', 910, 750, t, .24, .021 * intensity);
           tone('sine', 1350, 1120, t + .035, .28, .012 * intensity);
+        } else if (material === 'mug') {
+          tone('sine', 725, 515, t, .22, .027 * intensity);
+          tone('triangle', 1180, 810, t + .03, .17, .012 * intensity);
         } else {
           tone('triangle', 205, 95, t, .13, .038 * intensity);
           noise(t, .075, .012 * intensity, 650);
@@ -523,425 +546,15 @@
     } catch { /* Audio is optional. */ }
   }
 
-  function drawBackdrop(time) {
-    if (ready(roomImage)) {
-      ctx.drawImage(roomImage, 0, 0, W, H);
-      if (ready(catImage)) {
-        drawFoliage(time, 'topLeft');
-        drawFoliage(time, 'topRight');
-      }
-      if (ready(catImage)) drawAnimatedCat(time);
-      if (ready(catImage)) drawFoliage(time, 'vine');
-      return;
-    }
-    const level = LEVELS[state.level];
-    ctx.fillStyle = level.color; ctx.fillRect(0, 0, W, H);
-    const wash = ctx.createLinearGradient(0, 0, W, H);
-    wash.addColorStop(0, 'rgba(255,255,255,.8)'); wash.addColorStop(.48, 'rgba(255,255,255,.04)'); wash.addColorStop(1, 'rgba(78,108,117,.12)');
-    ctx.fillStyle = wash; ctx.fillRect(0, 0, W, H);
-    // Tiny framed room with a visible wall and floor plane.
-    roundRect(45, 52, 907, 572, 17, '#ecf6f6', '#91b3c1', 3);
-    roundRect(61, 75, 878, 530, 5, level.color, '#d2dfe0', 1);
-    ctx.fillStyle = 'rgba(94,122,127,.12)'; ctx.fillRect(65, 77, 870, 16);
-    ctx.fillStyle = '#c5d4d1'; ctx.fillRect(65, 584, 870, 22);
-    ctx.fillStyle = level.floor; ctx.fillRect(65, 605, 870, 16);
-    for (let x = 90; x < 940; x += 120) line(x, 608, x + 12, 620, 'rgba(73,71,63,.23)', 1);
-    // Wall seams and illustrated paper texture.
-    for (let y = 130; y < 570; y += 82) line(68, y, 930, y, 'rgba(91,135,145,.055)', 1);
-    for (let x = 110; x < 920; x += 150) line(x, 87, x, 576, 'rgba(91,135,145,.035)', 1);
-
-    // Window stays behind the play field; it also explains the warm light.
-    ctx.save(); ctx.shadowColor = 'rgba(53,93,107,.13)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8;
-    roundRect(684, 113, 175, 154, 19, '#d7e9ee', '#7a9aaa', 8); ctx.restore();
-    roundRect(697, 126, 149, 128, 10, '#add7db');
-    ctx.save(); ctx.beginPath(); ctx.roundRect(697, 126, 149, 128, 10); ctx.clip();
-    ctx.fillStyle = '#eaf4ef'; ctx.fillRect(697, 194, 149, 60);
-    ellipse(746, 216, 82, 24, '#c9dfce'); ellipse(838, 223, 80, 28, '#9ec7bd');
-    ellipse(824, 155, 20, 20, '#f7e3b6');
-    ctx.restore();
-    line(771, 126, 771, 254, '#edf6f3', 8); line(697, 191, 846, 191, '#edf6f3', 7);
-    roundRect(679, 256, 184, 11, 3, '#8baab5');
-    // Diagonal sunlight, muted enough not to compete with objects.
-    ctx.fillStyle = 'rgba(255,255,255,.16)'; ctx.beginPath(); ctx.moveTo(690, 270); ctx.lineTo(854, 270); ctx.lineTo(924, 592); ctx.lineTo(577, 592); ctx.closePath(); ctx.fill();
-
-    // Picture and taped moving label.
-    roundRect(127, 138, 177, 111, 5, '#e8d7c6', '#9b8678', 6);
-    roundRect(139, 150, 153, 87, 2, '#e8eef0');
-    drawPicture();
-    ctx.save(); ctx.translate(326, 125); ctx.rotate(-.045);
-    roundRect(0, 0, 111, 46, 3, '#f8f1dc', '#d3c5aa');
-    text('搬 家 中', 55, 23, 16, '#927459', 800, 'center'); ctx.restore();
-
-    // Floor rug, illustrated behind all moving objects.
-    ellipse(347, 589, 246, 16, 'rgba(40,84,93,.12)');
-    roundRect(169, 551, 345, 49, 22, '#b2c7bd');
-    roundRect(179, 559, 325, 31, 17, '#d9e5da');
-    for (let x = 190; x < 494; x += 18) line(x, 577, x + 8, 571, 'rgba(82,126,117,.21)', 1);
-
-    drawCat(time);
-    if (state.level === 0) drawEntryDetails();
-    else if (state.level === 1) drawStudyDetails();
-    else drawLivingDetails();
-  }
-
-  function drawPicture() {
-    ctx.fillStyle = '#bcd3d7'; ctx.fillRect(141, 151, 149, 84);
-    ctx.fillStyle = '#e5e1c7'; ctx.beginPath(); ctx.moveTo(141, 225); ctx.lineTo(194, 178); ctx.lineTo(228, 211); ctx.lineTo(250, 185); ctx.lineTo(290, 222); ctx.lineTo(290, 235); ctx.lineTo(141, 235); ctx.fill();
-    ellipse(256, 169, 11, 11, '#f5e7bd');
-    text('HOME', 216, 218, 12, '#608b91', 800, 'center');
-  }
-
-  function drawCat(time) {
-    const blink = Math.sin(time * .0018) > .994;
-    const eyeY = state.catWake > .1 ? 209 : 213;
-    // The cat peers from the outside of the illustrated window.
-    ellipse(823, 233, 22, 14, '#b88765');
-    ctx.fillStyle = '#b88765'; ctx.beginPath(); ctx.moveTo(798, 199); ctx.lineTo(805, 172); ctx.lineTo(820, 193); ctx.lineTo(836, 171); ctx.lineTo(846, 201); ctx.closePath(); ctx.fill();
-    ellipse(823, 205, 25, 21, '#c89670');
-    ctx.fillStyle = '#dba584'; ctx.beginPath(); ctx.moveTo(805, 187); ctx.lineTo(807, 178); ctx.lineTo(814, 190); ctx.fill();
-    ctx.beginPath(); ctx.moveTo(833, 188); ctx.lineTo(838, 179); ctx.lineTo(840, 192); ctx.fill();
-    if (blink) { line(813, eyeY, 819, eyeY, '#493b39', 2); line(828, eyeY, 834, eyeY, '#493b39', 2); }
-    else { ellipse(816, eyeY, 2.2, 3.2, '#493b39'); ellipse(832, eyeY, 2.2, 3.2, '#493b39'); }
-    ellipse(824, 219, 2, 1.5, '#a36a67');
-    line(805, 220, 812, 220, '#a37364'); line(835, 220, 843, 219, '#a37364');
-    state.catWake = Math.max(0, state.catWake - .012);
-  }
-
-  function drawAnimatedCat(time) {
-    // The room is painted without the cat; the original matching artwork is
-    // clipped into movable head and still paws so it never looks pasted on.
-    ctx.save();
-    ctx.beginPath();
-    ctx.ellipse(815, 201, 11, 7, 0, 0, Math.PI * 2);
-    ctx.ellipse(839, 201, 11, 7, 0, 0, Math.PI * 2);
-    ctx.clip();
-    ctx.drawImage(catImage, 0, 0, W, H);
-    ctx.restore();
-
-    const motion = reducedMotion.matches ? 0 : 1;
-    const awake = Math.min(1, state.catWake);
-    const breathing = Math.sin(time * .0021 - .4);
-    const sway = motion * (Math.sin(time * .00105 + .5) * .059 + Math.sin(time * .00051) * .018 + awake * Math.sin(time * .011) * .07);
-    const bob = motion * (breathing * 1.65 + Math.sin(time * .00083) * .55 + awake * Math.sin(time * .012) * 1.8);
-    const side = motion * (Math.sin(time * .00094) * 2.35 + Math.sin(time * .0017 + 1.1) * .65);
-    ctx.save();
-    ctx.translate(826 + side, 195 + bob);
-    ctx.rotate(sway);
-    ctx.scale(1 + motion * breathing * .007, 1 + motion * breathing * .011);
-    ctx.translate(-826, -195);
-    ctx.beginPath();
-    ctx.ellipse(826, 176, 36, 30, 0, 0, Math.PI * 2);
-    ctx.moveTo(807, 163); ctx.lineTo(810, 143); ctx.lineTo(825, 160); ctx.closePath();
-    ctx.moveTo(835, 158); ctx.lineTo(851, 142); ctx.lineTo(856, 169); ctx.closePath();
-    ctx.clip();
-    ctx.drawImage(catImage, 0, 0, W, H);
-
-    const blinkTime = time % 5800;
-    if ((blinkTime > 4700 && blinkTime < 5050) || (blinkTime > 5200 && blinkTime < 5310)) {
-      for (const [x, color] of [[815, '#bc6d39'], [833, '#d0783f']]) {
-        ellipse(x, 174, 5.5, 5, color);
-        ctx.beginPath(); ctx.moveTo(x - 4.5, 175); ctx.quadraticCurveTo(x, 178, x + 4.5, 175);
-        ctx.strokeStyle = '#67412e'; ctx.lineWidth = 1.4; ctx.stroke();
-      }
-    }
-    ctx.restore();
-    state.catWake = Math.max(0, state.catWake - .012);
-  }
-
-  function prepareFoliage() {
-    // Isolate the original room's olive/yellow leaves once. Keeping their
-    // painted pixels retains the exact lighting and perspective of the room.
-    const source = document.createElement('canvas');
-    source.width = W; source.height = H;
-    const sourceCtx = source.getContext('2d', { willReadFrequently: true });
-    sourceCtx.drawImage(catImage, 0, 0, W, H);
-    const original = sourceCtx.getImageData(0, 0, W, H);
-    const regions = {
-      topLeft: [770, 62, 831, 146],
-      topRight: [831, 62, 871, 146],
-      vine: [838, 187, 919, 357],
-    };
-    foliageLayers = {};
-    for (const [name, [left, top, right, bottom]] of Object.entries(regions)) {
-      const layer = document.createElement('canvas');
-      layer.width = right - left; layer.height = bottom - top;
-      const layerCtx = layer.getContext('2d');
-      const pixels = layerCtx.createImageData(layer.width, layer.height);
-      for (let y = top; y < bottom; y++) {
-        for (let x = left; x < right; x++) {
-          const sourceIndex = (y * W + x) * 4;
-          const i = ((y - top) * layer.width + x - left) * 4;
-          const r = original.data[sourceIndex], g = original.data[sourceIndex + 1], b = original.data[sourceIndex + 2];
-          const olive = Math.min(1, Math.max(0, (g - b - 5) / 13), Math.max(0, (g - r * .7) / 11));
-          if (olive <= 0) continue;
-          pixels.data[i] = r;
-          pixels.data[i + 1] = g;
-          pixels.data[i + 2] = b;
-          pixels.data[i + 3] = Math.round(255 * olive);
-        }
-      }
-      layerCtx.putImageData(pixels, 0, 0);
-      foliageLayers[name] = { image: layer, x: left, y: top };
-    }
-  }
-
-  function drawFoliage(time, which) {
-    if (!foliageLayers) prepareFoliage();
-    const motion = reducedMotion.matches ? 0 : 1;
-    const wind = Math.sin(time * .0011) + .26 * Math.sin(time * .00255 + 1.4);
-    const [anchorX, anchorY, angle] = which === 'topLeft'
-      ? [796, 68, wind * .068]
-      : which === 'topRight'
-        ? [855, 82, (Math.sin(time * .00104 + .85) + .21 * Math.sin(time * .0028)) * .062]
-        : [895, 191, (Math.sin(time * .00091 + .42) + .18 * Math.sin(time * .0019 + 2)) * .052];
-    ctx.save();
-    ctx.translate(anchorX, anchorY);
-    ctx.rotate(angle * motion);
-    ctx.translate(-anchorX, -anchorY);
-    // A fine stem makes the vine read as attached to the sill as its leaves sway.
-    if (which === 'vine') {
-      ctx.beginPath();
-      ctx.moveTo(895, 195);
-      ctx.bezierCurveTo(880, 215, 907, 230, 895, 260);
-      ctx.bezierCurveTo(879, 286, 896, 317, 882, 345);
-      ctx.strokeStyle = 'rgba(77, 72, 35, .64)';
-      ctx.lineWidth = 1.45;
-      ctx.stroke();
-    }
-    const layer = foliageLayers[which];
-    ctx.drawImage(layer.image, layer.x, layer.y);
-    ctx.restore();
-  }
-  function drawEntryDetails() {
-    // Low console table, painted as set dressing outside the collision path.
-    roundRect(664, 314, 170, 21, 5, '#9d8570', '#806c5f', 2);
-    roundRect(681, 334, 12, 170, 3, '#a88f76'); roundRect(808, 334, 12, 170, 3, '#a88f76');
-    roundRect(706, 292, 46, 22, 6, '#7e9c9f');
-    line(728, 292, 728, 272, '#628987', 3);
-    ellipse(721, 278, 9, 5, '#81a88d'); ellipse(736, 274, 9, 5, '#81a88d');
-    text('欢迎回家', 674, 380, 16, 'rgba(80,112,119,.49)', 700);
-  }
-  function drawStudyDetails() {
-    // Decorative board gives the tall obstacle a reason to exist.
-    roundRect(558, 325, 86, 20, 4, '#bd9b78');
-    roundRect(565, 298, 24, 27, 2, '#6b9ba5'); roundRect(592, 292, 17, 33, 2, '#d69c77');
-    roundRect(612, 302, 21, 23, 2, '#93a983');
-    text('书房', 535, 136, 20, 'rgba(84,128,118,.43)', 800);
-  }
-  function drawLivingDetails() {
-    roundRect(545, 470, 154, 82, 19, '#b1a5a0', '#8f8781', 2);
-    roundRect(536, 457, 161, 39, 11, '#d1b8a7');
-    roundRect(551, 470, 52, 39, 11, '#dcbaa8'); roundRect(611, 470, 68, 38, 10, '#c49d90');
-    ellipse(616, 551, 85, 13, 'rgba(89,71,68,.12)');
-    text('最后一箱', 658, 136, 19, 'rgba(144,106,96,.48)', 800);
-  }
-
-  function drawBlocks(time) {
-    for (const block of state.blocks) {
-      if (block.kind === 'shelf') {
-        if (ready(objectsImage)) {
-          ctx.save();
-          ctx.shadowColor = 'rgba(11,23,25,.28)'; ctx.shadowBlur = 20; ctx.shadowOffsetX = 12;
-          sprite(...SPRITES.shelf, block.x - block.w / 2, block.y - block.h / 2, block.w, block.h);
-          ctx.restore();
-          continue;
-        }
-        ctx.save(); ctx.shadowColor = 'rgba(46,62,60,.22)'; ctx.shadowBlur = 14; ctx.shadowOffsetX = 9;
-        roundRect(block.x - block.w / 2, block.y - block.h / 2, block.w, block.h, 5, '#9a745c', '#785b4b', 2); ctx.restore();
-        roundRect(block.x - block.w / 2 + 6, block.y - block.h / 2 + 8, block.w - 12, block.h - 16, 3, '#b48a68');
-        for (let y = block.y - block.h / 2 + 47; y < block.y + block.h / 2 - 4; y += 78) {
-          line(block.x - 18, y, block.x + 18, y, '#765947', 5);
-          roundRect(block.x - 13, y - 28, 7, 27, 1, '#648993');
-          roundRect(block.x - 4, y - 31, 7, 30, 1, '#d5a67f');
-          roundRect(block.x + 5, y - 24, 8, 23, 1, '#d7c5a1');
-        }
-      } else if (block.kind === 'gate') {
-        const progress = state.gateOpen ? Math.min(1, (time - state.gateOpenedAt) / 480) : 0;
-        if (progress >= 1) continue;
-        const rise = progress * block.h;
-        ctx.save(); ctx.translate(0, -rise);
-        ctx.shadowColor = 'rgba(37,45,42,.3)'; ctx.shadowBlur = 14; ctx.shadowOffsetX = 7;
-        roundRect(block.x - block.w / 2, block.y - block.h / 2, block.w, block.h, 5, '#9c7455', '#523b31', 2);
-        ctx.shadowBlur = 0; ctx.shadowOffsetX = 0;
-        const gateWood = ctx.createLinearGradient(block.x - 14, 0, block.x + 14, 0);
-        gateWood.addColorStop(0, '#6c4b38'); gateWood.addColorStop(.48, '#b88961'); gateWood.addColorStop(1, '#73503b');
-        roundRect(block.x - 11, block.y - block.h / 2 + 4, 22, block.h - 8, 2, gateWood);
-        for (let y = block.y - block.h / 2 + 19; y < block.y + block.h / 2 - 7; y += 33) {
-          line(block.x - 11, y, block.x + 11, y, 'rgba(58,40,29,.36)', 2);
-          ellipse(block.x, y + 6, 1.5, 1.5, '#e6c299');
-        }
-        ctx.restore();
-      } else {
-        ctx.save(); ctx.shadowColor = 'rgba(61,58,52,.17)'; ctx.shadowBlur = 12; ctx.shadowOffsetY = 8;
-        roundRect(block.x - block.w / 2, block.y - block.h / 2, block.w, block.h, 5, '#9e8274', '#876a5c', 2); ctx.restore();
-        line(block.x - block.w / 2 + 5, block.y - 2, block.x + block.w / 2 - 5, block.y - 2, '#e1c3a4', 2);
-        ctx.fillStyle = '#806356';
-        for (const bx of [block.x - block.w / 2 + 23, block.x + block.w / 2 - 23]) {
-          ctx.beginPath(); ctx.moveTo(bx - 9, block.y + 10); ctx.lineTo(bx + 9, block.y + 10); ctx.lineTo(bx, block.y + 35); ctx.closePath(); ctx.fill();
-        }
-      }
-    }
-    if (state.level === 2) {
-      roundRect(651, 81, 80, 15, 7, state.gateOpen ? '#8cba98' : '#de9c6e', '#a57557', 1.5);
-      for (let x = 661; x < 722; x += 13) ellipse(x, 88, 2, 2, state.gateOpen ? '#dff5d8' : '#fbe1ba');
-      if (!state.gateOpen) text('木块开关', 691, 111, 11, '#bd784b', 800, 'center');
-      if (state.gateOpen && ready(objectsImage)) sprite(...SPRITES.block.slice(0, 4), 667, 93, 48, 48);
-    }
-  }
-
-  function drawBox(time) {
-    if (ready(objectsImage)) {
-      const paint = () => {
-        const last = state.captures.at(-1);
-        const age = last ? time - last.startedAt : -1000;
-        const impact = Math.max(0, 1 - Math.abs(age - 450) / 240);
-        const shake = Math.sin(age * .12) * impact * 3;
-        ctx.save();
-        ctx.translate(868 + shake, 548 - impact * 5);
-        ctx.rotate(-Math.PI / 2);
-        ctx.scale(1 + impact * .055, 1 + impact * .055);
-        ctx.shadowColor = 'rgba(18,14,11,.28)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 12;
-        sprite(...SPRITES.box, -66, -59, 132, 118);
-        ctx.restore();
-      };
-      paint();
-      return () => {
-        ctx.save();
-        ctx.beginPath(); ctx.rect(855, 470, 90, 145); ctx.clip();
-        paint();
-        ctx.restore();
-      };
-    }
-    const x = 798, y = 526;
-    ellipse(858, 608, 83, 13, 'rgba(64,66,54,.2)');
-    // Rear wall and visibly open mouth.
-    roundRect(x, y, 123, 80, 6, '#8c644a', '#72543f', 2);
-    roundRect(x + 7, y + 7, 109, 48, 3, '#594b42');
-    ctx.fillStyle = '#ad7d55'; ctx.beginPath(); ctx.moveTo(x + 4, y + 8); ctx.lineTo(x - 16, y - 17); ctx.lineTo(x + 24, y - 21); ctx.lineTo(x + 34, y + 8); ctx.closePath(); ctx.fill();
-    ctx.fillStyle = '#c3966e'; ctx.beginPath(); ctx.moveTo(x + 94, y + 8); ctx.lineTo(x + 108, y - 20); ctx.lineTo(x + 138, y - 11); ctx.lineTo(x + 120, y + 8); ctx.closePath(); ctx.fill();
-    // Front of box is drawn after the items to visually hold them inside.
-    return () => {
-      roundRect(x + 2, y + 36, 119, 79, 4, '#bd916a', '#8b654b', 2);
-      ctx.fillStyle = 'rgba(230,198,155,.55)'; ctx.fillRect(x + 9, y + 41, 105, 5);
-      line(x + 63, y + 42, x + 63, y + 107, 'rgba(114,79,54,.24)', 2);
-      roundRect(x + 32, y + 65, 57, 26, 2, '#f1e5ce', '#c7b79b');
-      text('搬家箱', x + 61, y + 78, 11, '#8b6a51', 800, 'center');
-      roundRect(x + 3, y + 37, 118, 6, 2, '#d2a47a');
-      if (state.collected.size) {
-        const phase = Math.max(0, Math.sin(time * .014));
-        ctx.save(); ctx.globalAlpha = Math.min(.55, phase * .4); ellipse(x + 61, y + 23, 70, 17, '#fff3ca'); ctx.restore();
-      }
-    };
-  }
-
-  function drawBoxFeedback(time) {
-    for (const capture of state.captures) {
-      const age = time - capture.startedAt - 230;
-      if (age < 0 || age > 1050) continue;
-      const p = age / 1050;
-      ctx.save();
-      ctx.translate(868, 526);
-      if (age < 510) {
-        const ring = age / 510;
-        ctx.globalAlpha = .9 * (1 - ring);
-        ctx.strokeStyle = '#fff1b8'; ctx.lineWidth = 6 * (1 - ring) + 1;
-        ctx.beginPath(); ctx.ellipse(0, 0, 30 + ring * 116, 12 + ring * 51, 0, 0, Math.PI * 2); ctx.stroke();
-      }
-      ctx.globalAlpha = 1;
-      const t = age / 1000;
-      for (let i = 0; i < 26; i++) {
-        const spread = ((i * 37) % 29 - 14) / 14;
-        const lift = 215 + ((i * 53) % 9) * 17;
-        const x = spread * 205 * t;
-        const y = -14 - lift * t + 265 * t * t;
-        ctx.save();
-        ctx.globalAlpha = Math.min(1, age / 110) * Math.min(1, (1050 - age) / 250);
-        ctx.translate(x, y); ctx.rotate((i % 2 ? -1 : 1) * (t * 8 + i));
-        roundRect(-4, -7, 8, 14, 2, ['#ffe7a9', '#f4a66f', '#bde4c5', '#fff4d1'][i % 4]);
-        ctx.restore();
-      }
-      ctx.restore();
-    }
-  }
-
-  function drawContactShadow(body) {
-    const bounds = body.bounds;
-    const { x, y } = state.displayedGravity;
-    const dir = Math.abs(x) > Math.abs(y) ? DIRECTIONS[x > 0 ? 1 : 3] : DIRECTIONS[y >= 0 ? 0 : 2];
-    let gap, px, py, horizontal;
-    const surfaces = state.blocks.filter(b => b.kind !== 'gate' || !state.gateOpen);
-    if (dir.y === 1) {
-      const candidates = [FLOOR, ...surfaces.filter(b => bounds.max.x > b.x - b.w / 2 && bounds.min.x < b.x + b.w / 2 && b.y - b.h / 2 >= bounds.max.y - 5).map(b => b.y - b.h / 2)];
-      py = Math.min(...candidates); px = body.position.x; gap = Math.max(0, py - bounds.max.y); horizontal = true;
-    } else if (dir.y === -1) {
-      const candidates = [CEILING, ...surfaces.filter(b => bounds.max.x > b.x - b.w / 2 && bounds.min.x < b.x + b.w / 2 && b.y + b.h / 2 <= bounds.min.y + 5).map(b => b.y + b.h / 2)];
-      py = Math.max(...candidates); px = body.position.x; gap = Math.max(0, bounds.min.y - py); horizontal = true;
-    } else if (dir.x === 1) {
-      const candidates = [RIGHT, ...surfaces.filter(b => bounds.max.y > b.y - b.h / 2 && bounds.min.y < b.y + b.h / 2 && b.x - b.w / 2 >= bounds.max.x - 5).map(b => b.x - b.w / 2)];
-      px = Math.min(...candidates); py = body.position.y; gap = Math.max(0, px - bounds.max.x); horizontal = false;
-    } else {
-      const candidates = [LEFT, ...surfaces.filter(b => bounds.max.y > b.y - b.h / 2 && bounds.min.y < b.y + b.h / 2 && b.x + b.w / 2 <= bounds.min.x + 5).map(b => b.x + b.w / 2)];
-      px = Math.max(...candidates); py = body.position.y; gap = Math.max(0, bounds.min.x - px); horizontal = false;
-    }
-    const near = Math.max(0, 1 - gap / 190);
-    if (near < .04) return;
-    ctx.save();
-    ctx.filter = `blur(${Math.min(15, 3 + gap * .075)}px)`;
-    const alpha = .35 * near;
-    if (horizontal) ellipse(px + 4, py - dir.y * 2, Math.max(14, (bounds.max.x - bounds.min.x) * .56), 7 + gap * .025, `rgba(20,16,14,${alpha})`);
-    else ellipse(px - dir.x * 2, py + 3, 7 + gap * .025, Math.max(14, (bounds.max.y - bounds.min.y) * .55), `rgba(20,16,14,${alpha})`);
-    ctx.restore();
-  }
-
-  function drawItem(item, body, time, scale = 1, alpha = 1) {
-    const x = body.position.x, y = body.position.y;
-    ctx.save(); ctx.globalAlpha *= alpha; ctx.translate(x, y); ctx.rotate(body.angle); ctx.scale(scale, scale);
-    if (ready(objectsImage)) {
-      ctx.shadowColor = 'rgba(13,20,21,.18)'; ctx.shadowBlur = 6; ctx.shadowOffsetY = 2;
-      const [sx, sy, sw, sh, dw, dh] = SPRITES[item.kind];
-      sprite(sx, sy, sw, sh, -dw / 2, -dh / 2, dw, dh);
-      ctx.restore();
-      return;
-    }
-    if (item.kind === 'ball') {
-      ctx.shadowColor = 'rgba(31,72,79,.24)'; ctx.shadowBlur = 11; ctx.shadowOffsetY = 7;
-      ellipse(0, 0, item.radius, item.radius, '#dfbc6c'); ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-      const shade = ctx.createRadialGradient(-9, -11, 3, 1, 2, item.radius);
-      shade.addColorStop(0, '#fae3a0'); shade.addColorStop(1, '#c7954d');
-      ellipse(0, 0, item.radius - 2, item.radius - 2, shade);
-      ctx.beginPath(); ctx.arc(-4, 0, item.radius * .8, -.9, 1.3); ctx.strokeStyle = '#f9edc9'; ctx.lineWidth = 2.5; ctx.stroke();
-      ctx.beginPath(); ctx.arc(10, 4, item.radius * .72, 2.0, 4.2); ctx.stroke();
-    } else if (item.kind === 'book') {
-      ctx.shadowColor = 'rgba(42,61,69,.22)'; ctx.shadowBlur = 12; ctx.shadowOffsetY = 7;
-      roundRect(-35, -18, 70, 36, 4, '#416d82', '#294f60', 2); ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-      roundRect(-29, -15, 59, 29, 2, '#5c91a2');
-      line(-23, -8, 17, -8, '#bad6d3', 2); line(-23, -2, 10, -2, '#bad6d3', 1.5);
-      roundRect(17, -17, 8, 14, 1, '#e9a77d');
-    } else if (item.kind === 'clock') {
-      ctx.shadowColor = 'rgba(70,63,50,.25)'; ctx.shadowBlur = 11; ctx.shadowOffsetY = 7;
-      roundRect(-27, -28, 54, 56, 11, '#e2a06e', '#af704e', 2); ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-      roundRect(-16, -20, 32, 40, 9, '#f7e9ca', '#d2b593', 2);
-      ellipse(0, 0, 2.2, 2.2, '#7f7880'); line(0, 0, 0, -11, '#516c70', 2); line(0, 0, 9, 3, '#516c70', 2);
-      roundRect(-21, -36, 12, 7, 3, '#ac795d'); roundRect(9, -36, 12, 7, 3, '#ac795d');
-    } else {
-      ctx.shadowColor = 'rgba(69,61,48,.23)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 6;
-      roundRect(-29, -29, 58, 58, 7, '#c99e70', '#98704f', 2); ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-      roundRect(-23, -23, 46, 46, 4, '#dfb688');
-      line(-23, 0, 23, 0, '#a67f5c', 3); line(0, -23, 0, 23, '#a67f5c', 3);
-      roundRect(-17, -18, 13, 10, 2, '#f6e5c2');
-    }
-    ctx.restore();
-  }
-
   function draw(time) {
     ctx.clearRect(0, 0, W, H);
-    drawBackdrop(time);
-    drawBlocks(time);
-    for (const body of state.bodies.values()) drawContactShadow(body);
-    const boxFront = drawBox(time);
+    art.drawBackdrop(time);
+    art.drawBlocks(time);
+    for (const body of state.bodies.values()) art.drawContactShadow(body);
+    const boxFront = art.drawBox(time);
     for (const item of LEVELS[state.level].items) {
       const body = state.bodies.get(item.id);
-      if (body) drawItem(item, body, time);
+      if (body) art.drawItem(item, body, time);
     }
     for (const capture of state.captures) {
       const progress = Math.min(1, (time - capture.startedAt) / 480);
@@ -949,16 +562,10 @@
       const eased = 1 - Math.pow(1 - progress, 3);
       const item = LEVELS[state.level].items.find(i => i.id === capture.id);
       const body = { position: { x: capture.x + (880 - capture.x) * eased, y: capture.y + (554 - capture.y) * eased }, angle: capture.angle + eased * .18 };
-      drawItem(item, body, time, 1 - eased * .55, 1 - eased);
+      art.drawItem(item, body, time, 1 - eased * .55, 1 - eased);
     }
     boxFront();
-    drawBoxFeedback(time);
-    // Soft foreground reflections preserve the glass display case feel.
-    ctx.save(); ctx.globalAlpha = .28;
-    const gloss = ctx.createLinearGradient(43, 50, 390, 400);
-    gloss.addColorStop(0, 'rgba(255,255,255,.65)'); gloss.addColorStop(.5, 'rgba(255,255,255,.04)'); gloss.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = gloss; ctx.beginPath(); ctx.moveTo(56, 60); ctx.lineTo(330, 60); ctx.lineTo(132, 370); ctx.lineTo(56, 370); ctx.closePath(); ctx.fill(); ctx.restore();
-    // Direction is displayed with the physical controls below the room.
+    art.drawBoxFeedback(time);
   }
 
   function tick(time) {
@@ -972,7 +579,7 @@
     if (state.motionMode === 'on' && state.motionLastAt && time - state.motionLastAt > 2200) {
       stopMotion('传感器暂时没有数据，已切回按钮操作。');
     }
-    if (!document.hidden && state.engine && state.started && !state.won && !elements.helpDialog.open && !elements.settingsDialog.open && !elements.startDialog.open) {
+    if (!document.hidden && state.engine && state.started && !state.transitioning && elements.catIntro.hidden && !state.won && !elements.helpDialog.open && !elements.settingsDialog.open && !elements.startDialog.open) {
       state.accumulator = Math.min(50, state.accumulator + delta);
       while (state.accumulator >= 16.6667) {
         Engine.update(state.engine, 16.6667);
@@ -1013,18 +620,68 @@
     if (state.sound) sound('ui');
   }
 
+  function showIntro() {
+    state.introStep = 0;
+    elements.catIntroImage.src = art.catPortrait();
+    elements.catIntro.hidden = false;
+    updateIntro();
+    elements.catIntroNext.focus();
+  }
+  function updateIntro() {
+    const lines = [
+      '喵！搬家开始啦。我会在窗边陪你。先把小球送进右边的纸箱。',
+      state.motionMode === 'off' ? '按左、右按钮，每次让重力转 90°。房间不会跟着转，看看物件怎么滚动吧。' : '把手机朝想让物件去的方向倾斜；就像真的把东西放在掌心。',
+      '后面的房间有更多物件和机关。木块能触发橙色开关；遇到困难可以撤销，也能在设置里选关。',
+    ];
+    elements.catIntroText.textContent = lines[state.introStep];
+    elements.catIntroStep.textContent = `${state.introStep + 1} / ${lines.length}`;
+    elements.catIntroNext.textContent = state.introStep === lines.length - 1 ? '开始搬家 ↗' : '继续 ↗';
+  }
+  function advanceIntro() {
+    if (state.introStep < 2) {
+      state.introStep++;
+      updateIntro();
+      sound('ui');
+    } else {
+      elements.catIntro.hidden = true;
+      state.introStep = -1;
+      if (state.motionMode === 'off') elements.turnRight.focus();
+      else canvas.focus();
+    }
+  }
+  function transitionToLevel(index) {
+    if (state.transitioning) return;
+    state.transitioning = true;
+    elements.result.hidden = true;
+    elements.transitionCatImage.src = art.catPortrait();
+    elements.transitionKicker.textContent = index === 0 ? '再出发' : `第 ${String(index + 1).padStart(2, '0')} 间`;
+    elements.transitionRoom.textContent = LEVELS[index].room;
+    elements.transitionTip.textContent = TRANSITION_TIPS[index];
+    elements.pixelTransition.hidden = false;
+    clearTimeout(state.transitionTimer);
+    state.transitionTimer = setTimeout(() => {
+      setupLevel(index);
+      elements.pixelTransition.hidden = true;
+      state.transitioning = false;
+      if (state.motionMode === 'off') elements.turnRight.focus();
+    }, matchMedia('(prefers-reduced-motion: reduce)').matches ? 450 : 1650);
+  }
+
   elements.turnLeft.addEventListener('click', () => turn(-1));
   elements.turnRight.addEventListener('click', () => turn(1));
   elements.startMotion.addEventListener('click', () => {
     state.started = true;
     elements.startDialog.close();
     toggleMotion();
+    showIntro();
   });
   elements.startButtons.addEventListener('click', () => {
     state.started = true;
     elements.startDialog.close();
     updateMotionUI('按钮操作中，可随时在设置里切换体感。');
+    showIntro();
   });
+  elements.catIntroNext.addEventListener('click', advanceIntro);
   elements.startDialog.addEventListener('cancel', event => event.preventDefault());
   elements.settingsButton.addEventListener('click', () => elements.settingsDialog.showModal());
   elements.settingsClose.addEventListener('click', () => elements.settingsDialog.close());
@@ -1035,23 +692,22 @@
     if (state.motionMode !== 'off') stopMotion('已切换为按钮操作。');
   });
   for (const button of elements.levelButtons) button.addEventListener('click', () => {
-    setupLevel(Number(button.dataset.level));
     elements.settingsDialog.close();
-    note(`已进入${LEVELS[state.level].room}`);
+    transitionToLevel(Number(button.dataset.level));
   });
   window.addEventListener('devicemotion', onDeviceMotion);
   window.addEventListener('deviceorientation', onDeviceOrientation);
   elements.undoButton.addEventListener('click', undo);
   elements.resetButton.addEventListener('click', reset);
   elements.retryResult.addEventListener('click', reset);
-  elements.nextButton.addEventListener('click', () => setupLevel((state.level + 1) % LEVELS.length));
+  elements.nextButton.addEventListener('click', () => transitionToLevel((state.level + 1) % LEVELS.length));
   elements.soundButton.addEventListener('click', toggleSound);
   elements.helpButton.addEventListener('click', () => {
     elements.settingsDialog.close();
     elements.helpDialog.showModal();
   });
   window.addEventListener('keydown', event => {
-    if (!state.started || elements.helpDialog.open || elements.settingsDialog.open || elements.startDialog.open || event.altKey || event.ctrlKey || event.metaKey) return;
+    if (!state.started || state.transitioning || !elements.catIntro.hidden || elements.helpDialog.open || elements.settingsDialog.open || elements.startDialog.open || event.altKey || event.ctrlKey || event.metaKey) return;
     if (event.key === 'ArrowLeft') { event.preventDefault(); turn(-1); }
     if (event.key === 'ArrowRight') { event.preventDefault(); turn(1); }
     if (event.key.toLowerCase() === 'z') undo();

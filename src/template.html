@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#dceaf1">
+  <meta name="theme-color" content="#152936">
   <title>重力搬家 · 倾斜手机，收好这一屋</title>
-  <meta name="description" content="倾斜手机改变重力，把物件送进搬家箱。三间房，一段轻巧的物理解谜。">
+  <meta name="description" content="倾斜手机改变重力，把物件送进搬家箱。五间像素房间，一段轻巧的物理解谜。">
   <style>/* FONT_INLINE */
 /* STYLE_INLINE */</style>
 </head>
@@ -25,7 +25,7 @@
 
     <section class="game-heading" aria-labelledby="roomTitle">
       <div class="title-block">
-        <p class="eyeline"><span id="stageIndex">房间 01 / 03</span><span class="eyeline-rule"></span><span id="stageLabel">玄关</span></p>
+        <p class="eyeline"><span id="stageIndex">房间 01 / 05</span><span class="eyeline-rule"></span><span id="stageLabel">玄关</span></p>
         <h1 id="roomTitle">第一件，轻轻放好。</h1>
         <p id="roomHint">倾斜手机，让小球滚进纸箱。</p>
       </div>
@@ -37,9 +37,14 @@
 
     <section class="stage-section" aria-label="游戏场景">
       <div class="stage-frame">
-        <canvas id="gameCanvas" width="1000" height="680" role="img" aria-label="微缩房间游戏画面"></canvas>
-        <div class="gravity-hud" aria-hidden="true"><span>重力方向</span><strong id="hudArrow">↓</strong><small id="hudMode">触屏操控</small></div>
+        <canvas id="gameCanvas" width="1000" height="680" role="img" tabindex="-1" aria-label="像素房间游戏画面"></canvas>
         <div class="stage-note" id="stageNote" aria-live="polite"></div>
+        <div class="cat-intro" id="catIntro" hidden role="dialog" aria-modal="true" aria-labelledby="catIntroTitle">
+          <div class="cat-dialogue"><div class="cat-avatar" aria-hidden="true"><img id="catIntroImage" alt=""></div><div class="cat-speech"><span class="cat-speaker" id="catIntroTitle">窗边的小猫</span><p id="catIntroText"></p><div class="cat-dialogue-foot"><span id="catIntroStep"></span><button class="button button-primary" id="catIntroNext" type="button">继续 ↗</button></div></div></div>
+        </div>
+        <div class="pixel-transition" id="pixelTransition" hidden aria-live="polite">
+          <div class="transition-card"><div class="transition-cat"><img id="transitionCatImage" alt="小猫正在等待"></div><span class="transition-kicker" id="transitionKicker">下一间房</span><strong id="transitionRoom"></strong><p id="transitionTip"></p><div class="transition-track" aria-hidden="true"><span></span></div></div>
+        </div>
         <div class="result" id="result" hidden>
           <div class="result-card">
             <div class="result-stamp" aria-hidden="true">✓</div>
@@ -58,11 +63,6 @@
     <section class="control-panel" aria-label="游戏操作">
       <div class="turn-controls">
         <button class="turn-button" id="turnLeft" aria-label="将重力向左转九十度"><span class="turn-symbol" aria-hidden="true">↶</span><span>重力左转</span><kbd>←</kbd></button>
-        <div class="gravity-indicator" aria-live="polite">
-          <span class="indicator-caption">当前方向</span>
-          <span class="indicator-arrow" id="gravityArrow" aria-hidden="true">↓</span>
-          <span class="indicator-value" id="turnCount">触屏备用</span>
-        </div>
         <button class="turn-button" id="turnRight" aria-label="将重力向右转九十度"><span class="turn-symbol" aria-hidden="true">↷</span><span>重力右转</span><kbd>→</kbd></button>
       </div>
       <div class="control-rail">
@@ -105,6 +105,8 @@
       <button class="level-option" data-level="0" type="button"><span>01</span><strong>玄关</strong><small>初次搬家</small></button>
       <button class="level-option" data-level="1" type="button"><span>02</span><strong>书房</strong><small>绕过书架</small></button>
       <button class="level-option" data-level="2" type="button"><span>03</span><strong>客厅</strong><small>打开通道</small></button>
+      <button class="level-option" data-level="3" type="button"><span>04</span><strong>厨房</strong><small>绕过料理台</small></button>
+      <button class="level-option" data-level="4" type="button"><span>05</span><strong>工作间</strong><small>最后的机关</small></button>
     </div><p class="settings-caption">切换关卡会从该关开头重新开始。</p></div>
     <button class="settings-help" id="helpButton" type="button">查看玩法说明 <span aria-hidden="true">↗</span></button>
   </dialog>
@@ -114,7 +116,7 @@
       <button class="dialog-close" aria-label="关闭玩法说明">×</button>
       <div class="dialog-icon" aria-hidden="true">◉</div>
       <h2 id="helpTitle">让重力换个方向。</h2>
-      <p>体感模式下，竖屏倾斜手机改变重力；按钮模式下，点左右键让重力每次转 90°。房间保持正立；利用墙壁和家具，把物件送进纸箱。右上角齿轮可切换操作方式与关卡。</p>
+      <p>体感模式下，竖屏倾斜手机改变重力；按钮模式下，点左右键让重力每次转 90°。房间保持正立；利用墙壁和家具，把物件送进纸箱。遇到橙色开关，试着让木块碰到它。右上角齿轮可切换操作方式与关卡。</p>
       <ul>
         <li><strong>← / →</strong> 转动重力</li>
         <li><strong>Z</strong> 撤销上一步</li>

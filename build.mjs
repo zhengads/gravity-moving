@@ -12,10 +12,7 @@ const htmlBody = template
   .replace('/* FONT_INLINE */', fontCss)
   .replace('/* STYLE_INLINE */', read('src/style.css'))
   .replace('/* MATTER_INLINE */', read('node_modules/matter-js/build/matter.min.js'))
-  .replace('/* GAME_INLINE */', read('src/app.js')
-    .replace('/* ROOM_EMPTY_IMAGE */', data('src/assets/room-clean-v3.webp','image/webp'))
-    .replace('/* ROOM_IMAGE */', data('src/assets/room.webp','image/webp'))
-    .replace('/* OBJECTS_IMAGE */', data('src/assets/objects.webp','image/webp')));
+  .replace('/* GAME_INLINE */', `${read('src/pixel-art.js')}\n${read('src/app.js')}`);
 const licenses = [
   'Smiley Sans / Copyright 2022–2024 atelierAnchor / SIL Open Font License 1.1',
   read('src/fonts/SmileySans-OFL.txt'),
@@ -24,7 +21,7 @@ const licenses = [
 ].join('\n');
 const html = `<!--\n${licenses.replaceAll('-->', '-- &gt;')}\n-->\n${htmlBody}`;
 
-if (html.includes('/* STYLE_INLINE */') || html.includes('/* MATTER_INLINE */') || html.includes('/* GAME_INLINE */') || html.includes('/* ROOM_EMPTY_IMAGE */') || html.includes('/* ROOM_IMAGE */') || html.includes('/* OBJECTS_IMAGE */')) {
+if (html.includes('/* STYLE_INLINE */') || html.includes('/* MATTER_INLINE */') || html.includes('/* GAME_INLINE */')) {
   throw new Error('Build placeholder remains');
 }
 fs.writeFileSync(path.join(root, 'index.html'), html, 'utf8');
