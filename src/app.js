@@ -3,7 +3,7 @@
   const { Engine, Bodies, Body, Composite, Events, Sleeping } = Matter;
   const W = 1000, H = 680;
   const FLOOR = 604, CEILING = 76, LEFT = 62, RIGHT = 938;
-  const CATCH = { x: 826, y: 530, w: 108, h: 74 };
+  const CATCH = { x: 800, y: 530, w: 88, h: 74 };
   const DIRECTIONS = [
     { x: 0, y: 1, arrow: '↓', name: '向下' },
     { x: 1, y: 0, arrow: '→', name: '向右' },
@@ -535,6 +535,9 @@
         });
       } else if (kind === 'ui') {
         tone('sine', 620, 810, t, .12, .025);
+      } else if (kind === 'type') {
+        const pitch = 590 + (material.codePointAt(0) % 4) * 42;
+        tone('square', pitch, pitch * .8, t, .032, .006);
       }
     } catch { /* Audio is optional. */ }
   }
@@ -554,7 +557,7 @@
       if (progress >= 1) continue;
       const eased = 1 - Math.pow(1 - progress, 3);
       const item = LEVELS[state.level].items.find(i => i.id === capture.id);
-      const body = { position: { x: capture.x + (880 - capture.x) * eased, y: capture.y + (570 - capture.y) * eased }, angle: capture.angle + eased * .18 };
+      const body = { position: { x: capture.x + (830 - capture.x) * eased, y: capture.y + (550 - capture.y) * eased }, angle: capture.angle + eased * .18 };
       art.drawItem(item, body, time, 1 - eased * .55, 1 - eased);
     }
     boxFront();
@@ -603,13 +606,20 @@
     draw(time);
   }
 
-  function toggleSound() {
-    state.sound = !state.sound;
+  function setSound(enabled, feedback = false) {
+    state.sound = enabled;
     elements.soundButton.setAttribute('aria-pressed', String(state.sound));
     elements.soundButton.setAttribute('aria-label', state.sound ? '关闭游戏音效，当前已开启' : '开启游戏音效，当前已关闭');
     elements.soundButton.title = state.sound ? '音效已开启' : '音效已关闭';
-    if (state.sound) sound('ui');
+    if (state.sound) {
+      try {
+        state.audio ||= new (window.AudioContext || window.webkitAudioContext)();
+        if (state.audio.state === 'suspended') state.audio.resume();
+      } catch { /* Audio is optional. */ }
+      if (feedback) sound('ui');
+    }
   }
+  function toggleSound() { setSound(!state.sound, true); }
 
   function showIntro() {
     state.introStep = 0;
@@ -639,6 +649,7 @@
       state.introTypingTimer = setInterval(() => {
         length++;
         elements.catIntroTyped.textContent = characters.slice(0, length).join('');
+        if (!/[\s，。！；：、,.!?]/u.test(characters[length - 1])) sound('type', characters[length - 1]);
         if (length >= characters.length) {
           clearInterval(state.introTypingTimer);
           state.introTypingTimer = 0;
@@ -685,12 +696,14 @@
   elements.turnRight.addEventListener('click', () => turn(1));
   elements.startMotion.addEventListener('click', () => {
     state.started = true;
+    setSound(true);
     elements.startDialog.close();
     toggleMotion();
     showIntro();
   });
   elements.startButtons.addEventListener('click', () => {
     state.started = true;
+    setSound(true);
     elements.startDialog.close();
     updateMotionUI('按钮操作中，可随时在设置里切换体感。');
     showIntro();

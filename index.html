@@ -921,39 +921,44 @@ function createPixelArt(ctx, state) {
     const last = state.captures.at(-1);
     const age = last ? time - last.startedAt : -1000;
     const shake = age > 300 && age < 650 ? Math.round(Math.sin(age * .09) * (1 - Math.abs(age - 475) / 175)) : 0;
-    const x = 198 + shake;
-    // The carton is open on its left and upper face, matching the routes by
-    // which pieces can actually enter. Its back and floor sit behind them.
-    worldPixel(x - 5, 149, 42, 2, '#3f4350');
-    worldPixel(x + 1, 132, 35, 18, '#5a4143');
-    worldPixel(x + 2, 133, 32, 15, '#bb8058');
-    worldPixel(x + 2, 134, 30, 12, '#70474a');
-    worldPixel(x + 3, 135, 27, 10, '#4a3d47');
-    worldPixel(x + 29, 135, 3, 10, '#815147');
-    worldPixel(x + 32, 132, 4, 18, '#a5694a');
-    worldPixel(x + 33, 134, 2, 13, '#d29561');
-    worldPixel(x + 1, 127, 33, 4, '#795046');
-    worldPixel(x + 2, 127, 30, 2, '#f0bd7b');
-    worldPixel(x + 4, 129, 27, 2, '#d89966');
-    worldPixel(x - 5, 129, 9, 2, '#7a5047');
-    worldPixel(x - 7, 126, 10, 3, '#e9af71');
-    worldPixel(x - 8, 125, 9, 1, '#f6d195');
+    const x = 182 + shake;
+    // Open cardboard carton: rear flap and dark opening sit behind the items.
+    // The left corner stays open so objects can enter at floor height.
+    worldPixel(x - 5, 150, 44, 2, '#3f4350');
+    worldPixel(x + 5, 130, 34, 20, '#69473c');
+    worldPixel(x + 6, 131, 31, 18, '#bc8251');
+    worldPixel(x + 8, 132, 26, 5, '#684934');
+    worldPixel(x + 9, 133, 23, 3, '#805337');
+    worldPixel(x + 6, 129, 31, 2, '#744d37');
+    worldPixel(x + 10, 124, 22, 5, '#dba66c');
+    worldPixel(x + 12, 123, 18, 1, '#f3ce92');
+    worldPixel(x + 10, 128, 22, 1, '#9b653e');
+    worldPixel(x + 36, 129, 4, 19, '#8e5a3c');
+    worldPixel(x + 37, 131, 2, 15, '#d49a5f');
+    // Two unfolded top flaps make the silhouette read as a moving box.
+    worldPixel(x - 4, 130, 9, 2, '#825336');
+    worldPixel(x - 7, 127, 11, 3, '#d9a36a');
+    worldPixel(x - 8, 126, 10, 1, '#f2c88d');
+    worldPixel(x + 33, 126, 8, 3, '#d29a60');
+    worldPixel(x + 36, 124, 6, 2, '#edbd7c');
     return () => {
-      // A low near-side wall masks the lower edge of an arriving item. The
-      // mouth stays unobstructed, so rolling in no longer crosses a solid side.
-      worldPixel(x + 1, 144, 34, 7, '#604447');
-      worldPixel(x + 2, 145, 31, 5, '#cf925f');
-      worldPixel(x + 3, 145, 29, 1, '#f4c786');
-      worldPixel(x + 4, 148, 26, 1, '#a5694a');
-      worldPixel(x + 14, 146, 1, 3, '#825244');
-      worldPixel(x + 13, 146, 3, 1, '#825244');
-      worldPixel(x + 19, 146, 1, 3, '#825244');
-      worldPixel(x + 18, 146, 3, 1, '#825244');
-      worldPixel(x + 25, 145, 2, 5, '#edbd7e');
-      worldPixel(x - 6, 144, 8, 2, '#d29461');
-      worldPixel(x - 9, 146, 11, 2, '#e7ad72');
-      worldPixel(x - 8, 148, 10, 1, '#84554a');
-      worldPixel(x + 31, 144, 4, 7, '#a96b4f');
+      // A broad, uninterrupted kraft front hides collected pieces and reads
+      // as cardboard rather than a cabinet door or drawer.
+      worldPixel(x + 12, 135, 27, 16, '#694632');
+      worldPixel(x + 13, 136, 24, 14, '#d4a067');
+      worldPixel(x + 13, 136, 24, 1, '#f1c98d');
+      worldPixel(x + 13, 149, 24, 1, '#ad7145');
+      worldPixel(x + 25, 136, 3, 14, '#ba8151');
+      worldPixel(x + 26, 137, 1, 12, '#e7b77a');
+      worldPixel(x + 16, 140, 7, 7, '#f1dfb6');
+      worldPixel(x + 19, 141, 1, 5, '#9d7455');
+      worldPixel(x + 18, 142, 3, 1, '#9d7455');
+      worldPixel(x + 18, 143, 1, 1, '#9d7455');
+      worldPixel(x + 20, 143, 1, 1, '#9d7455');
+      worldPixel(x + 39, 135, 2, 16, '#8b593c');
+      worldPixel(x + 40, 136, 1, 13, '#c88c55');
+      worldPixel(x - 6, 146, 12, 3, '#b98351');
+      worldPixel(x - 8, 148, 14, 2, '#9c6944');
     };
   }
 
@@ -973,11 +978,11 @@ function createPixelArt(ctx, state) {
         ctx.save(); ctx.globalAlpha = 1 - age / 380;
         ctx.strokeStyle = '#fff0ab'; ctx.lineWidth = 8;
         const r = 16 + age / 14;
-        ctx.strokeRect(874 - r, 550 - r * .6, r * 2, r * 1.2);
+        ctx.strokeRect(830 - r, 550 - r * .6, r * 2, r * 1.2);
         ctx.restore();
       }
       for (let i = 0; i < 20; i++) {
-        const x = 874 + ((i * 37) % 29 - 14) * 8 * t;
+        const x = 830 + ((i * 37) % 29 - 14) * 8 * t;
         const y = 542 - (110 + (i * 11) % 70) * t + 115 * t * t;
         ctx.save(); ctx.globalAlpha = Math.min(1, (900 - age) / 210);
         fill(ctx, Math.round(x / P) * P, Math.round(y / P) * P, 8, 8, ['#ffe2a3', '#ec9b6a', '#a8d6a2', '#fff4d1'][i % 4]);
@@ -1002,7 +1007,7 @@ function createPixelArt(ctx, state) {
   const { Engine, Bodies, Body, Composite, Events, Sleeping } = Matter;
   const W = 1000, H = 680;
   const FLOOR = 604, CEILING = 76, LEFT = 62, RIGHT = 938;
-  const CATCH = { x: 826, y: 530, w: 108, h: 74 };
+  const CATCH = { x: 800, y: 530, w: 88, h: 74 };
   const DIRECTIONS = [
     { x: 0, y: 1, arrow: '↓', name: '向下' },
     { x: 1, y: 0, arrow: '→', name: '向右' },
@@ -1534,6 +1539,9 @@ function createPixelArt(ctx, state) {
         });
       } else if (kind === 'ui') {
         tone('sine', 620, 810, t, .12, .025);
+      } else if (kind === 'type') {
+        const pitch = 590 + (material.codePointAt(0) % 4) * 42;
+        tone('square', pitch, pitch * .8, t, .032, .006);
       }
     } catch { /* Audio is optional. */ }
   }
@@ -1553,7 +1561,7 @@ function createPixelArt(ctx, state) {
       if (progress >= 1) continue;
       const eased = 1 - Math.pow(1 - progress, 3);
       const item = LEVELS[state.level].items.find(i => i.id === capture.id);
-      const body = { position: { x: capture.x + (880 - capture.x) * eased, y: capture.y + (570 - capture.y) * eased }, angle: capture.angle + eased * .18 };
+      const body = { position: { x: capture.x + (830 - capture.x) * eased, y: capture.y + (550 - capture.y) * eased }, angle: capture.angle + eased * .18 };
       art.drawItem(item, body, time, 1 - eased * .55, 1 - eased);
     }
     boxFront();
@@ -1602,13 +1610,20 @@ function createPixelArt(ctx, state) {
     draw(time);
   }
 
-  function toggleSound() {
-    state.sound = !state.sound;
+  function setSound(enabled, feedback = false) {
+    state.sound = enabled;
     elements.soundButton.setAttribute('aria-pressed', String(state.sound));
     elements.soundButton.setAttribute('aria-label', state.sound ? '关闭游戏音效，当前已开启' : '开启游戏音效，当前已关闭');
     elements.soundButton.title = state.sound ? '音效已开启' : '音效已关闭';
-    if (state.sound) sound('ui');
+    if (state.sound) {
+      try {
+        state.audio ||= new (window.AudioContext || window.webkitAudioContext)();
+        if (state.audio.state === 'suspended') state.audio.resume();
+      } catch { /* Audio is optional. */ }
+      if (feedback) sound('ui');
+    }
   }
+  function toggleSound() { setSound(!state.sound, true); }
 
   function showIntro() {
     state.introStep = 0;
@@ -1638,6 +1653,7 @@ function createPixelArt(ctx, state) {
       state.introTypingTimer = setInterval(() => {
         length++;
         elements.catIntroTyped.textContent = characters.slice(0, length).join('');
+        if (!/[\s，。！；：、,.!?]/u.test(characters[length - 1])) sound('type', characters[length - 1]);
         if (length >= characters.length) {
           clearInterval(state.introTypingTimer);
           state.introTypingTimer = 0;
@@ -1684,12 +1700,14 @@ function createPixelArt(ctx, state) {
   elements.turnRight.addEventListener('click', () => turn(1));
   elements.startMotion.addEventListener('click', () => {
     state.started = true;
+    setSound(true);
     elements.startDialog.close();
     toggleMotion();
     showIntro();
   });
   elements.startButtons.addEventListener('click', () => {
     state.started = true;
+    setSound(true);
     elements.startDialog.close();
     updateMotionUI('按钮操作中，可随时在设置里切换体感。');
     showIntro();
