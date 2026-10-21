@@ -784,6 +784,15 @@
   });
   window.addEventListener('devicemotion', onDeviceMotion);
   window.addEventListener('deviceorientation', onDeviceOrientation);
+  document.addEventListener('touchmove', event => {
+    const dialog = event.target instanceof Element ? event.target.closest('dialog[open]') : null;
+    const touch = event.touches?.[0];
+    if (dialog) {
+      const box = dialog.getBoundingClientRect();
+      if (!touch || (touch.clientX >= box.left && touch.clientX <= box.right && touch.clientY >= box.top && touch.clientY <= box.bottom)) return;
+    }
+    event.preventDefault();
+  }, { passive: false });
   elements.undoButton.addEventListener('click', undo);
   elements.resetButton.addEventListener('click', reset);
   elements.retryResult.addEventListener('click', reset);
