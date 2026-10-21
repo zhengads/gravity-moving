@@ -234,24 +234,14 @@
     if (!a || !Number.isFinite(a.x) || !Number.isFinite(a.y)) return;
     // The accelerometer reports proper acceleration, opposite to gravity.
     // Device y points toward the top; canvas y points down.
-    const gravity = screenGravity(-a.x / 9.81 * 1.45, a.y / 9.81 * 1.45);
-    acceptMotion(gravity.x, gravity.y, 'motion');
-  }
-
-  function screenGravity(x, y) {
-    const angle = (((screen.orientation?.angle ?? window.orientation ?? 0) % 360) + 360) % 360;
-    if (angle === 90) return { x: -y, y: x };
-    if (angle === 180) return { x: -x, y: -y };
-    if (angle === 270) return { x: y, y: -x };
-    return { x, y };
+    acceptMotion(-a.x / 9.81 * 1.45, a.y / 9.81 * 1.45, 'motion');
   }
 
   function onDeviceOrientation(event) {
     if (!Number.isFinite(event.beta) || !Number.isFinite(event.gamma)) return;
     // Positive beta is upright (down on screen); positive gamma tips right.
-    const gravity = screenGravity(Math.sin(event.gamma * Math.PI / 180) * 1.45,
-      Math.sin(event.beta * Math.PI / 180) * 1.45);
-    acceptMotion(gravity.x, gravity.y, 'orientation');
+    acceptMotion(Math.sin(event.gamma * Math.PI / 180) * 1.45,
+      Math.sin(event.beta * Math.PI / 180) * 1.45, 'orientation');
   }
 
   function makeItem(item) {
